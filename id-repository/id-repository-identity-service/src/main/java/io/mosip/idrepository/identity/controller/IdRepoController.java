@@ -261,7 +261,7 @@ public class IdRepoController {
 			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
-	public ResponseEntity<IdResponseDTO> retrieveIdentityById(@Validated @RequestBody IdRequestByIdDTO requestById,
+	public ResponseEntity<IdResponseDTO> retrieveIdentityById(@RequestBody IdRequestByIdDTO requestById,
 														   @ApiIgnore Errors errors) throws IdRepoAppException {
 		try {
 			String type = validator.validateType(requestById.getType());
