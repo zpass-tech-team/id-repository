@@ -83,6 +83,8 @@ public class IdRepoController {
 	/** The Constant RETRIEVE_IDENTITY. */
 	private static final String RETRIEVE_IDENTITY = "retrieveIdentity";
 
+	private static final String RETRIEVE_IDENTITY_BYID = "retrieveIdentityById";
+
 	/** The mosip logger. */
 	Logger mosipLogger = IdRepoLogger.getLogger(IdRepoController.class);
 
@@ -277,17 +279,19 @@ public class IdRepoController {
 			}
 			extractionFormats.remove(null);
 			validator.validateTypeAndExtractionFormats(type, extractionFormats);
-			return new ResponseEntity<>(idRepoService.retrieveIdentity(requestById.getId(),
-					Objects.isNull(requestById.getIdType()) ? getIdType(requestById.getId()) : validator.validateIdType(requestById.getIdType()), type, extractionFormats),
-					HttpStatus.OK);
+			mosipLogger.debug(IdRepoSecurityManager.getUser(), ID_REPO_CONTROLLER, RETRIEVE_IDENTITY_BYID, "IdRepo retrieveIdentityById request:" + requestById.toString());
+			IdResponseDTO responseDTO = idRepoService.retrieveIdentity(requestById.getId(),
+					Objects.isNull(requestById.getIdType()) ? getIdType(requestById.getId()) : validator.validateIdType(requestById.getIdType()), type, extractionFormats);
+			mosipLogger.debug(IdRepoSecurityManager.getUser(), ID_REPO_CONTROLLER, RETRIEVE_IDENTITY_BYID, "IdRepo retrieveIdentityById response:" + responseDTO.toString());
+			return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 		} catch (IdRepoAppException e) {
 			auditHelper.auditError(AuditModules.ID_REPO_CORE_SERVICE,
 					AuditEvents.RETRIEVE_IDENTITY_REQUEST_RESPONSE_UIN, requestById.getId(), IdType.UIN, e);
-			mosipLogger.error(IdRepoSecurityManager.getUser(), ID_REPO_CONTROLLER, RETRIEVE_IDENTITY, e.getMessage());
+			mosipLogger.error(IdRepoSecurityManager.getUser(), ID_REPO_CONTROLLER, RETRIEVE_IDENTITY_BYID, e.getMessage());
 			throw new IdRepoAppException(e.getErrorCode(), e.getErrorText(), e);
 		} finally {
 			auditHelper.audit(AuditModules.ID_REPO_CORE_SERVICE, AuditEvents.RETRIEVE_IDENTITY_REQUEST_RESPONSE_UIN, requestById.getId(),
-					IdType.UIN, "Retrieve Identity requested");
+					IdType.UIN, "Retrieve Identity By Id requested");
 		}
 	}
 
