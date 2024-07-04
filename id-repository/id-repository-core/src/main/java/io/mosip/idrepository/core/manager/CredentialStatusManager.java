@@ -11,6 +11,9 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,7 +76,10 @@ public class CredentialStatusManager {
 	
 	@Value("${" + CREDENTIAL_STATUS_UPDATE_TOPIC + "}")
 	private String credentailStatusUpdateTopic;
-	
+
+	@Value("${credential.request.batch.page.size:40}")
+	private int pageSize;
+
 	@Autowired
 	private DummyPartnerCheckUtil dummyPartner;
 	
@@ -117,8 +123,10 @@ public class CredentialStatusManager {
 	public void handleNewOrUpdatedRequests() {
 		try {
 			String activeStatus = EnvUtil.getUinActiveStatus();
+			Sort sort = Sort.by(Sort.Direction.ASC, "crDTimes");
+			Pageable pageable = PageRequest.of(0, pageSize, sort);
 			List<CredentialRequestStatus> newIssueRequestList = statusRepo
-					.findByStatus(CredentialRequestStatusLifecycle.NEW.toString());
+					.findByStatus(CredentialRequestStatusLifecycle.NEW.toString(), pageable);
 			for (CredentialRequestStatus credentialRequestStatus : newIssueRequestList) {
 				cancelIssuedRequest(credentialRequestStatus.getRequestId());
 				String idvId = decryptId(credentialRequestStatus.getIndividualId());
