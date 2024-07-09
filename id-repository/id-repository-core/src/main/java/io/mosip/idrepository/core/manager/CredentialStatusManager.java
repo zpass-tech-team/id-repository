@@ -131,15 +131,15 @@ public class CredentialStatusManager {
 					.findByStatus(CredentialRequestStatusLifecycle.NEW.toString(), pageable);
 			mosipLogger.info(IdRepoSecurityManager.getUser(), this.getClass().getSimpleName(), "handleNewOrUpdatedRequests",
 					"Total records picked from credential_request_status table for processing is " + newIssueRequestList.size());
-			for (CredentialRequestStatus credentialRequestStatus : newIssueRequestList) {
-				cancelIssuedRequest(credentialRequestStatus.getRequestId());
-				String idvId = decryptId(credentialRequestStatus.getIndividualId());
-				credManager.notifyUinCredential(idvId, credentialRequestStatus.getIdExpiryTimestamp(), activeStatus,
-						Objects.nonNull(credentialRequestStatus.getUpdatedBy()), null,
-						uinHashSaltRepo::retrieveSaltById, this::credentialRequestResponseConsumer,
-						this::idaEventConsumer, List.of(credentialRequestStatus.getPartnerId()),credentialRequestStatus.getRequestId());
-				deleteDummyPartner(credentialRequestStatus);
-			}
+//			for (CredentialRequestStatus credentialRequestStatus : newIssueRequestList) {
+//				cancelIssuedRequest(credentialRequestStatus.getRequestId());
+//				String idvId = decryptId(credentialRequestStatus.getIndividualId());
+//				credManager.notifyUinCredential(idvId, credentialRequestStatus.getIdExpiryTimestamp(), activeStatus,
+//						Objects.nonNull(credentialRequestStatus.getUpdatedBy()), null,
+//						uinHashSaltRepo::retrieveSaltById, this::credentialRequestResponseConsumer,
+//						this::idaEventConsumer, List.of(credentialRequestStatus.getPartnerId()),credentialRequestStatus.getRequestId());
+//				deleteDummyPartner(credentialRequestStatus);
+//			}
 			mosipLogger.info(IdRepoSecurityManager.getUser(), this.getClass().getSimpleName(), "handleNewOrUpdatedRequests",
 					newIssueRequestList.size() + " total records processed.");
 		} catch (Exception e) {
