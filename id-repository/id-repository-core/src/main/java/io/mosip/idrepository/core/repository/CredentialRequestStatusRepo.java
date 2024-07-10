@@ -53,8 +53,8 @@ public interface CredentialRequestStatusRepo extends JpaRepository<CredentialReq
 
 	@Transactional
 	@Lock(value = LockModeType.PESSIMISTIC_WRITE)
-	@Query("SELECT crs FROM CredentialRequestStatus crs"
-			+ "WHERE crs.status=:status ORDER BY crs.crDTimes asc limit=:pageSize for update skip locked ")
+	@Query(value = "SELECT * FROM CredentialRequestStatus crs"
+			+ "WHERE crs.status=:status ORDER BY crs.crDTimes asc FOR UPDATE SKIP LOCKED LIMIT :pageSize", nativeQuery = true)
 	List<CredentialRequestStatus> findByStatus(@Param("status") String status,
 											   @Param("pageSize") int pageSize);
 
