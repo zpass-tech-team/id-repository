@@ -128,7 +128,7 @@ public class CredentialStatusManager {
 			Sort sort = Sort.by(Sort.Direction.ASC, "crDTimes");
 			Pageable pageable = PageRequest.of(0, pageSize, sort);
 			List<CredentialRequestStatus> newIssueRequestList = statusRepo
-					.findByStatus(CredentialRequestStatusLifecycle.NEW.toString(), pageable);
+					.findByStatus(CredentialRequestStatusLifecycle.NEW.toString(), pageSize);
 			mosipLogger.info(IdRepoSecurityManager.getUser(), this.getClass().getSimpleName(), "handleNewOrUpdatedRequests",
 					"Total records picked from credential_request_status table for processing is " + newIssueRequestList.size());
 			for (CredentialRequestStatus credentialRequestStatus : newIssueRequestList) {
