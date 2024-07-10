@@ -46,10 +46,17 @@ public interface CredentialRequestStatusRepo extends JpaRepository<CredentialReq
 		return this.findByIndividualIdHashAndPartnerIdAndIsDeleted(individualIdHash, partnerId, false);
 	}
 
+//	@Transactional
+//	@Lock(value = LockModeType.PESSIMISTIC_WRITE)
+//	@QueryHints({ @QueryHint(name = "javax.persistence.lock.timeout", value = "-2") })
+//	List<CredentialRequestStatus> findByStatus(String status, Pageable pageable);
+
 	@Transactional
 	@Lock(value = LockModeType.PESSIMISTIC_WRITE)
-	@QueryHints({ @QueryHint(name = "javax.persistence.lock.timeout", value = "-2") })
-	List<CredentialRequestStatus> findByStatus(String status, Pageable pageable);
+	@Query(value = "SELECT crs FROM CredentialRequestStatus crs"
+			+ "WHERE crs.status=:status ORDER BY crs.crDTimes asc for update skip locked ")
+	List<CredentialRequestStatus> findByStatus(@Param("status") String status,
+											   Pageable pageable);
 
 	List<CredentialRequestStatus> findByStatus(String status);
 	
