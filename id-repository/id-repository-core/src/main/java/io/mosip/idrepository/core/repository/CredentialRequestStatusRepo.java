@@ -48,7 +48,7 @@ public interface CredentialRequestStatusRepo extends JpaRepository<CredentialReq
 
 	@Transactional
 	@Lock(value = LockModeType.PESSIMISTIC_WRITE)
-	@QueryHints({ @QueryHint(name = "javax.persistence.lock.timeout", value = "1") })
+	@QueryHints({ @QueryHint(name = "javax.persistence.lock.timeout", value = "-2") })
 	List<CredentialRequestStatus> findByStatus(String status, Pageable pageable);
 
 	List<CredentialRequestStatus> findByStatus(String status);
