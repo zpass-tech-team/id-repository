@@ -56,7 +56,7 @@ public interface CredentialRequestStatusRepo extends JpaRepository<CredentialReq
 	@Query("SELECT crs FROM CredentialRequestStatus crs"
 			+ "WHERE crs.status=:status ORDER BY crs.crDTimes asc limit=:pageSize for update skip locked ")
 	List<CredentialRequestStatus> findByStatus(@Param("status") String status,
-											   int pageSize);
+											   @Param("pageSize") int pageSize);
 
 	List<CredentialRequestStatus> findByStatus(String status);
 	
