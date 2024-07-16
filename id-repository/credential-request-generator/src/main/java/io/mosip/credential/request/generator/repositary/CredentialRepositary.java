@@ -14,6 +14,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import io.mosip.credential.request.generator.entity.CredentialEntity;
 import io.mosip.kernel.core.dataaccess.spi.repository.BaseRepository;
 
@@ -52,7 +54,7 @@ public interface CredentialRepositary<T extends CredentialEntity, E> extends Bas
 	@Transactional
 	@Query(value = "SELECT * FROM credential_transaction ct"
 			+ " WHERE ct.status_code=:statusCode ORDER BY ct.cr_dtimes asc FOR UPDATE SKIP LOCKED LIMIT :pageSize", nativeQuery = true)
-	Page<CredentialEntity> findCredentialByStatusCode(@Param("statusCode")String statusCode, @Param("pageSize") int pageSize);
+	List<CredentialEntity> findCredentialByStatusCode(@Param("statusCode")String statusCode, @Param("pageSize") int pageSize);
 
 	/**
 	 * Find credential by status codes.
