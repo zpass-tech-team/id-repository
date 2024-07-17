@@ -35,6 +35,7 @@ import io.mosip.credential.request.generator.dto.Event;
 import io.mosip.credential.request.generator.entity.CredentialEntity;
 import io.mosip.credential.request.generator.exception.CredentialRequestGeneratorException;
 import io.mosip.credential.request.generator.util.Utilities;
+import io.mosip.idrepository.core.builder.AuditRequestBuilder;
 import io.mosip.idrepository.core.dto.CredentialIssueRequest;
 import io.mosip.idrepository.core.dto.CredentialIssueRequestDto;
 import io.mosip.idrepository.core.dto.CredentialIssueResponse;
@@ -42,6 +43,7 @@ import io.mosip.idrepository.core.dto.CredentialIssueStatusResponse;
 import io.mosip.idrepository.core.dto.CredentialRequestIdsDto;
 import io.mosip.idrepository.core.dto.PageDto;
 import io.mosip.idrepository.core.helper.AuditHelper;
+import io.mosip.idrepository.core.security.IdRepoSecurityManager;
 import io.mosip.idrepository.core.util.EnvUtil;
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
 import io.mosip.kernel.core.http.ResponseWrapper;
@@ -72,6 +74,12 @@ public class CredentialRequestServiceImplTest {
 
 	@Mock
 	private AuditHelper auditHelper;
+
+	@Mock
+	private IdRepoSecurityManager securityManager;
+
+	@Mock
+	private AuditRequestBuilder auditBuilder;
 
 
 	@Before
