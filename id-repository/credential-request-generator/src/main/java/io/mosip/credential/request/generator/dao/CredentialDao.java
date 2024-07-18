@@ -54,7 +54,7 @@ public class CredentialDao {
 
         LOGGER.info(IdRepoSecurityManager.getUser(), "CredentialDao", "batchid = " + batchId,
                 "Inside getCredentials() method");
-        Sort sort = Sort.by(Sort.Direction.ASC, "cr_dtimes");
+        Sort sort = Sort.by(Sort.Direction.ASC, "createDateTime");
         Pageable pageable = PageRequest.of(0, pageSize, sort);
         List<CredentialEntity> credentialEntities=new ArrayList<>();
         long startTime = System.currentTimeMillis();
