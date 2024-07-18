@@ -57,7 +57,7 @@ public class CredentialDao {
         List<CredentialEntity> credentialEntities = crdentialRepo.findCredentialByStatusCode(status, pageSize);
 
         LOGGER.info(IdRepoSecurityManager.getUser(), "CredentialDao", "batchid = " + batchId,
-                "Total records picked from credential_transaction table for processing is " + credentialEntities.size());
+                "Total records picked from credential_transaction table for processed ");
        
         return ((credentialEntities != null && credentialEntities.size() > 0) ? credentialEntities : new ArrayList<>());
     }
