@@ -178,17 +178,17 @@ public class BatchConfiguration {
 	@Bean(name = "alterAnnotation")
 	public String alterAnnotation() throws Exception {
 
-		Method findCredentialByStatusCode = CredentialRepositary.class.getDeclaredMethod("findCredentialByStatusCode",
-				String.class, Pageable.class);
-		findCredentialByStatusCode.setAccessible(true);
-		QueryHints queryHints = findCredentialByStatusCode.getDeclaredAnnotation(QueryHints.class);
-		QueryHint queryHint = (QueryHint) queryHints.value()[0];
-		java.lang.reflect.InvocationHandler invocationHandler = Proxy.getInvocationHandler(queryHint);
-		Field memberValues = invocationHandler.getClass().getDeclaredField("memberValues");
-		memberValues.setAccessible(true);
-		Map<String, Object> values = (Map<String, Object>) memberValues.get(invocationHandler);
-		values.put("value", propertyLoader().processLockTimeout);
-		findCredentialByStatusCode.setAccessible(false);
+//		Method findCredentialByStatusCode = CredentialRepositary.class.getDeclaredMethod("findCredentialByStatusCode",
+//				String.class, Pageable.class);
+//		findCredentialByStatusCode.setAccessible(true);
+//		QueryHints queryHints = findCredentialByStatusCode.getDeclaredAnnotation(QueryHints.class);
+//		QueryHint queryHint = (QueryHint) queryHints.value()[0];
+//		java.lang.reflect.InvocationHandler invocationHandler = Proxy.getInvocationHandler(queryHint);
+//		Field memberValues = invocationHandler.getClass().getDeclaredField("memberValues");
+//		memberValues.setAccessible(true);
+//		Map<String, Object> values = (Map<String, Object>) memberValues.get(invocationHandler);
+//		values.put("value", propertyLoader().processLockTimeout);
+//		findCredentialByStatusCode.setAccessible(false);
 
 		Method findCredentialByStatusCodes = CredentialRepositary.class.getDeclaredMethod("findCredentialByStatusCodes",
 				String[].class, Pageable.class);
