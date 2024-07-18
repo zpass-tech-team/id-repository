@@ -54,22 +54,15 @@ public class CredentialDao {
 
         LOGGER.info(IdRepoSecurityManager.getUser(), "CredentialDao", "batchid = " + batchId,
                 "Inside getCredentials() method");
-//        Sort sort = Sort.by(Sort.Direction.ASC, "createDateTime");
-//        Pageable pageable = PageRequest.of(0, pageSize, sort);
-        Pageable pageable = PageRequest.of(0, pageSize);
-        List<CredentialEntity> credentialEntities=new ArrayList<>();
+
         long startTime = System.currentTimeMillis();
-//        List<CredentialEntity> credentialEntities = crdentialRepo.findCredentialByStatusCode(status, pageSize);
-        Page<CredentialEntity> pagecredentialEntities = crdentialRepo.findCredentialByStatusCode(status, pageable);
+        List<CredentialEntity> credentialEntities = crdentialRepo.findCredentialByStatusCode(status, pageSize);
         long endTime = System.currentTimeMillis();
-        if (pagecredentialEntities != null && pagecredentialEntities.getContent() != null && !pagecredentialEntities.getContent().isEmpty()) {
-            credentialEntities = pagecredentialEntities.getContent();
-        }
+
         LOGGER.info(IdRepoSecurityManager.getUser(), "CredentialDao", "batchid = " + batchId,
                 "Total records picked from credential_transaction table for processed " + startTime + " " + endTime);
        
-//        return ((credentialEntities != null && credentialEntities.size() > 0) ? credentialEntities : new ArrayList<>());
-        return credentialEntities;
+        return ((credentialEntities != null && credentialEntities.size() > 0) ? credentialEntities : new ArrayList<>());
     }
 
     public List<CredentialEntity> getCredentialsForReprocess(String batchId) {
