@@ -101,15 +101,15 @@ public class BatchConfiguration {
 	 */
 	@Scheduled(fixedDelayString = "${mosip.credential.request.reprocess.job.timedelay}")
 	public void reProcessJob() {
-//		try {
-//			JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
-//					.toJobParameters();
-//			jobLauncher.run(credentialReProcessJob, jobParameters);
-//
-//		} catch (Exception e) {
-//			LOGGER.error(IdRepoSecurityManager.getUser(), BATCH_CONFIGURATION,
-//					"error in JobLauncher " + ExceptionUtils.getStackTrace(e));
-//		}
+		try {
+			JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
+					.toJobParameters();
+			jobLauncher.run(credentialReProcessJob, jobParameters);
+
+		} catch (Exception e) {
+			LOGGER.error(IdRepoSecurityManager.getUser(), BATCH_CONFIGURATION,
+					"error in JobLauncher " + ExceptionUtils.getStackTrace(e));
+		}
 	}
 	
 	/**
@@ -144,7 +144,7 @@ public class BatchConfiguration {
 	}
 	
 	@Bean
-	@DependsOn("alterAnnotation")
+//	@DependsOn("alterAnnotation")
 	public Step credentialReProcessStep() throws Exception {
 		return stepBuilderFactory.get("credentialReProcessJob").tasklet(credentialItemReprocessTasklet).build();
 
