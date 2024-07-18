@@ -137,7 +137,7 @@ public class BatchConfiguration {
 	}
 	
 	@Bean
-	@DependsOn("alterAnnotation")
+//	@DependsOn("alterAnnotation")
 	public Step credentialProcessStep() {
 		return stepBuilderFactory.get("credentialProcessJob").tasklet(credentialItemTasklet).build();
 
