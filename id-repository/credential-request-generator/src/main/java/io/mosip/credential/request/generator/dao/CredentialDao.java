@@ -54,10 +54,12 @@ public class CredentialDao {
 
         LOGGER.info(IdRepoSecurityManager.getUser(), "CredentialDao", "batchid = " + batchId,
                 "Inside getCredentials() method");
+        long startTime = System.currentTimeMillis();
         List<CredentialEntity> credentialEntities = crdentialRepo.findCredentialByStatusCode(status, pageSize);
-
+        long endTime = System.currentTimeMillis();
+        
         LOGGER.info(IdRepoSecurityManager.getUser(), "CredentialDao", "batchid = " + batchId,
-                "Total records picked from credential_transaction table for processed ");
+                "Total records picked from credential_transaction table for processed " + startTime + " " + endTime);
        
         return ((credentialEntities != null && credentialEntities.size() > 0) ? credentialEntities : new ArrayList<>());
     }
