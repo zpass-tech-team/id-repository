@@ -56,7 +56,7 @@ public interface CredentialRepositary<T extends CredentialEntity, E> extends Bas
 //	List<CredentialEntity> findCredentialByStatusCode(@Param("statusCode")String statusCode, @Param("pageSize") int pageSize);
 
 	@Query(value = "SELECT * FROM credential_transaction ct"
-			+ " WHERE ct.status_code=:statusCode FOR UPDATE SKIP LOCKED", nativeQuery = true)
+			+ " WHERE ct.status_code=:statusCode ORDER BY ct.cr_dtimes ASC FOR UPDATE SKIP LOCKED", nativeQuery = true)
 	Page<CredentialEntity> findCredentialByStatusCode(@Param("statusCode")String statusCode, Pageable pageable);
 
 	/**
