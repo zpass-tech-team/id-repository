@@ -84,11 +84,6 @@ public class CredentialItemReprocessTasklet implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-		return  RepeatStatus.FINISHED;
-	}
-
-//	@Override
-	public RepeatStatus execute1(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		String batchId = UUID.randomUUID().toString();
 		LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_REPROCESS_TASKLET, "batchid = " + batchId,
 				"Inside CredentialItemReprocessTasklet.execute() method");

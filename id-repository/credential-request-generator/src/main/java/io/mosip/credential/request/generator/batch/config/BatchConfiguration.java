@@ -144,7 +144,7 @@ public class BatchConfiguration {
 	}
 	
 	@Bean
-//	@DependsOn("alterAnnotation")
+	@DependsOn("alterAnnotation")
 	public Step credentialReProcessStep() throws Exception {
 		return stepBuilderFactory.get("credentialReProcessJob").tasklet(credentialItemReprocessTasklet).build();
 
