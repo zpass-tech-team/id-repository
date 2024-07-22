@@ -7,6 +7,7 @@ import javax.persistence.QueryHint;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -32,7 +33,7 @@ import io.mosip.kernel.core.dataaccess.spi.repository.BaseRepository;
  * @param <E> the element type
  */
 @Repository
-public interface CredentialRepositary<T extends CredentialEntity, E> extends BaseRepository<T, E> {
+public interface CredentialRepositary<T extends CredentialEntity, E> extends JpaRepository<T, E> {
 
 
 
@@ -51,6 +52,7 @@ public interface CredentialRepositary<T extends CredentialEntity, E> extends Bas
 	@Query("select c from CredentialEntity c where c.statusCode=:statusCode")
 	Page<CredentialEntity> findCredentialByStatusCode(@Param("statusCode")String statusCode, Pageable pageable);
 
+	@Transactional
 	@Query(value = "SELECT * FROM credential_transaction ct"
 			+ " WHERE ct.status_code=:statusCode ORDER BY cr_dtimes FOR UPDATE SKIP LOCKED LIMIT :pageSize", nativeQuery = true)
 	List<CredentialEntity> findCredentialByStatusCode(@Param("statusCode")String statusCode, @Param("pageSize") int pageSize);
