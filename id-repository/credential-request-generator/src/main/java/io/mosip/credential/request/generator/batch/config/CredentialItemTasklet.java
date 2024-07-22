@@ -77,6 +77,7 @@ public class CredentialItemTasklet implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+		long startTime = System.currentTimeMillis();
 		String batchId = UUID.randomUUID().toString();
 		LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
 				"Inside CredentialItemTasklet.execute() method");
@@ -181,8 +182,15 @@ public class CredentialItemTasklet implements Tasklet {
 			LOGGER.error(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
 						ExceptionUtils.getStackTrace(e));
 		}
-		if (!CollectionUtils.isEmpty(credentialEntities))
+		if (!CollectionUtils.isEmpty(credentialEntities)) {
+			long updateStartTime = System.currentTimeMillis();
 			credentialDao.update(batchId, credentialEntities);
+			long endTime = System.currentTimeMillis();
+			LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
+					"Total time taken to update " + credentialEntities.size() + " records (" + (endTime - updateStartTime) + "ms)");
+			LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
+					"Total time taken to complete process of " + credentialEntities.size() + " records (" + (endTime - startTime) + "ms)");
+		}
 
 		return RepeatStatus.FINISHED;
 	}
