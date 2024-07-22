@@ -40,7 +40,7 @@ public class CredentialDao {
 
     /** The crdential repo. */
     @Autowired
-    private CredentialRepositary<CredentialEntity, String> crdentialRepo;
+    private CredentialRepositary crdentialRepo;
 
 
     public void update(String batchId, List<CredentialEntity> credentialEntities) {

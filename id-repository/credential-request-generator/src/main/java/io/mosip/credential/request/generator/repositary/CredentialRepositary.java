@@ -33,7 +33,7 @@ import io.mosip.kernel.core.dataaccess.spi.repository.BaseRepository;
  * @param <E> the element type
  */
 @Repository
-public interface CredentialRepositary<T extends CredentialEntity, E> extends JpaRepository<T, E> {
+public interface CredentialRepositary extends JpaRepository<CredentialEntity, String> {
 
 
 

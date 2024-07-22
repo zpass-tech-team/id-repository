@@ -67,7 +67,7 @@ public class BatchConfiguration {
 
 	/** The crdential repo. */
 	@Autowired
-	private CredentialRepositary<CredentialEntity, String> crdentialRepo;
+	private CredentialRepositary crdentialRepo;
 
 	/** The credential process job. */
 	@Autowired
