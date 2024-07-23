@@ -49,14 +49,15 @@ public class CredentialDao {
                 "Record updated successfully. Total records : " + credentialEntities.size());
     }
 
-
-    public List<CredentialRequestStatus> getCredentials(String batchId) {
+//    public List<CredentialRequestStatus> getCredentials(String batchId) {
+    public List<CredentialEntity> getCredentials(String batchId) {
 
         LOGGER.info(IdRepoSecurityManager.getUser(), "CredentialDao", "batchid = " + batchId,
                 "Inside getCredentials() method");
 
         long startTime = System.currentTimeMillis();
-        List<CredentialRequestStatus> credentialEntities = statusRepo.findByStatus(status, pageSize);
+//        List<CredentialRequestStatus> credentialEntities = statusRepo.findByStatus(status, pageSize);
+        List<CredentialEntity> credentialEntities = crdentialRepo.findCredentialByStatusCode(status, pageSize);
         long endTime = System.currentTimeMillis();
 
         LOGGER.info(IdRepoSecurityManager.getUser(), "CredentialDao", "batchid = " + batchId,

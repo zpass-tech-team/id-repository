@@ -2,6 +2,7 @@ package io.mosip.credential.request.generator.batch.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.mosip.credential.request.generator.dao.CredentialDao;
+import io.mosip.credential.request.generator.entity.CredentialEntity;
 import io.mosip.credential.request.generator.entity.CredentialRequestStatus;
 import io.mosip.credential.request.generator.util.RestUtil;
 import io.mosip.idrepository.core.logger.IdRepoLogger;
@@ -61,7 +62,8 @@ public class CredentialItemTasklet implements Tasklet {
 		String batchId = UUID.randomUUID().toString();
 		LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
 				"Inside CredentialItemTasklet.execute() method");
-		List<CredentialRequestStatus> credentialEntities = credentialDao.getCredentials(batchId);
+//		List<CredentialRequestStatus> credentialEntities = credentialDao.getCredentials(batchId);
+		List<CredentialEntity> credentialEntities = credentialDao.getCredentials(batchId);
 
 //		try {
 //			forkJoinPool.submit(() -> credentialEntities.parallelStream().forEach(credential -> {
