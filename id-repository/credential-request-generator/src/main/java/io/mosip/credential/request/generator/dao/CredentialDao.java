@@ -1,28 +1,24 @@
 package io.mosip.credential.request.generator.dao;
+
 import io.mosip.credential.request.generator.entity.CredentialEntity;
+import io.mosip.credential.request.generator.entity.CredentialRequestStatus;
 import io.mosip.credential.request.generator.repositary.CredentialRepositary;
-import io.mosip.credential.request.generator.repositary.CredentialRequestStatus;
-import io.mosip.idrepository.core.logger.IdRepoLogger;
 import io.mosip.credential.request.generator.repositary.CredentialRequestStatusRepo;
+import io.mosip.idrepository.core.logger.IdRepoLogger;
 import io.mosip.idrepository.core.security.IdRepoSecurityManager;
 import io.mosip.kernel.core.logger.spi.Logger;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import org.apache.commons.math3.stat.descriptive.moment.SemiVariance.Direction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class CredentialDao {

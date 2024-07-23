@@ -1,7 +1,6 @@
 package io.mosip.credential.request.generator.repositary;
 
-import io.mosip.credential.request.generator.repositary.CredentialRequestStatus;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import io.mosip.credential.request.generator.entity.CredentialRequestStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

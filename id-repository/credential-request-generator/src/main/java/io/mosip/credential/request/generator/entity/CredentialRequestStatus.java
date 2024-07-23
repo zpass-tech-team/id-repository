@@ -1,4 +1,4 @@
-package io.mosip.credential.request.generator.repositary;
+package io.mosip.credential.request.generator.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,9 +20,11 @@ public class CredentialRequestStatus {
 	private String individualId;
 
 	@Id
+	@Column(name = "individual_id_hash")
 	private String individualIdHash;
 
 	@Id
+	@Column(name = "partner_id")
 	private String partnerId;
 
 	private String requestId;

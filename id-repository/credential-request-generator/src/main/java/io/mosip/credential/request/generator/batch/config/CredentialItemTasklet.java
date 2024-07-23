@@ -1,45 +1,24 @@
 package io.mosip.credential.request.generator.batch.config;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ForkJoinPool;
-
-import javax.annotation.PostConstruct;
-
-import io.mosip.credential.request.generator.repositary.CredentialRequestStatus;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.mosip.credential.request.generator.dao.CredentialDao;
+import io.mosip.credential.request.generator.entity.CredentialRequestStatus;
+import io.mosip.credential.request.generator.util.RestUtil;
+import io.mosip.idrepository.core.logger.IdRepoLogger;
+import io.mosip.idrepository.core.security.IdRepoSecurityManager;
+import io.mosip.kernel.core.logger.spi.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.mosip.credential.request.generator.constants.ApiName;
-import io.mosip.credential.request.generator.constants.CredentialStatusCode;
-import io.mosip.credential.request.generator.dao.CredentialDao;
-import io.mosip.credential.request.generator.entity.CredentialEntity;
-import io.mosip.credential.request.generator.exception.ApiNotAccessibleException;
-import io.mosip.credential.request.generator.util.RestUtil;
-import io.mosip.credential.request.generator.util.TrimExceptionMessage;
-import io.mosip.idrepository.core.dto.CredentialIssueRequestDto;
-import io.mosip.idrepository.core.dto.CredentialServiceRequestDto;
-import io.mosip.idrepository.core.dto.CredentialServiceResponse;
-import io.mosip.idrepository.core.dto.CredentialServiceResponseDto;
-import io.mosip.idrepository.core.dto.ErrorDTO;
-import io.mosip.idrepository.core.logger.IdRepoLogger;
-import io.mosip.idrepository.core.security.IdRepoSecurityManager;
-import io.mosip.kernel.core.exception.ExceptionUtils;
-import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.kernel.core.util.DateUtils;
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ForkJoinPool;
 
 @Component
 public class CredentialItemTasklet implements Tasklet {
