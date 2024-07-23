@@ -8,7 +8,7 @@ import java.util.concurrent.ForkJoinPool;
 
 import javax.annotation.PostConstruct;
 
-import io.mosip.idrepository.core.entity.CredentialRequestStatus;
+import io.mosip.credential.request.generator.repositary.CredentialRequestStatus;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -43,7 +43,7 @@ import io.mosip.kernel.core.util.DateUtils;
 
 @Component
 public class CredentialItemTasklet implements Tasklet {
-	
+
 	@Value("${credential.batch.thread.count:10}")
 	private int threadCount;
 

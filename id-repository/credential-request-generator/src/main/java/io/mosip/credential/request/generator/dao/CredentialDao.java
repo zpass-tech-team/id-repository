@@ -1,7 +1,7 @@
 package io.mosip.credential.request.generator.dao;
 import io.mosip.credential.request.generator.entity.CredentialEntity;
 import io.mosip.credential.request.generator.repositary.CredentialRepositary;
-import io.mosip.idrepository.core.entity.CredentialRequestStatus;
+import io.mosip.credential.request.generator.repositary.CredentialRequestStatus;
 import io.mosip.idrepository.core.logger.IdRepoLogger;
 import io.mosip.credential.request.generator.repositary.CredentialRequestStatusRepo;
 import io.mosip.idrepository.core.security.IdRepoSecurityManager;
