@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 public class CredentialDaoTest {
 
     @Mock
-    private CredentialRepositary credentialRepo;
+    private CredentialRepositary<CredentialEntity, String> credentialRepo;
 
     @InjectMocks
     private CredentialDao credentialDao;

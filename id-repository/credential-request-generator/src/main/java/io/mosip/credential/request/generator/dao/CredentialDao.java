@@ -38,7 +38,7 @@ public class CredentialDao {
 
     /** The crdential repo. */
     @Autowired
-    private CredentialRepositary crdentialRepo;
+    private CredentialRepositary<CredentialEntity, String> crdentialRepo;
 
     @Autowired
     private CredentialRequestStatusRepo statusRepo;
