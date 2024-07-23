@@ -15,6 +15,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -164,15 +165,15 @@ public class CredentialItemTasklet implements Tasklet {
 //			LOGGER.error(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
 //						ExceptionUtils.getStackTrace(e));
 //		}
-//		if (!CollectionUtils.isEmpty(credentialEntities)) {
-//			long updateStartTime = System.currentTimeMillis();
-//			credentialDao.update(batchId, credentialEntities);
+		if (!CollectionUtils.isEmpty(credentialEntities)) {
+			long updateStartTime = System.currentTimeMillis();
+			credentialDao.update(batchId, credentialEntities);
 			long endTime = System.currentTimeMillis();
-//			LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
-//					"Total time taken to update " + credentialEntities.size() + " records (" + (endTime - updateStartTime) + "ms)");
+			LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
+					"Total time taken to update " + credentialEntities.size() + " records (" + (endTime - updateStartTime) + "ms)");
 			LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
 					"Total time taken to complete process of " + credentialEntities.size() + " records (" + (endTime - startTime) + "ms)");
-//		}
+		}
 
 		return RepeatStatus.FINISHED;
 	}
