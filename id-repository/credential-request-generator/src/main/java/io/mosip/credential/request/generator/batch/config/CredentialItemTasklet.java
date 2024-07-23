@@ -167,11 +167,11 @@ public class CredentialItemTasklet implements Tasklet {
 //		if (!CollectionUtils.isEmpty(credentialEntities)) {
 //			long updateStartTime = System.currentTimeMillis();
 //			credentialDao.update(batchId, credentialEntities);
-//			long endTime = System.currentTimeMillis();
+			long endTime = System.currentTimeMillis();
 //			LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
 //					"Total time taken to update " + credentialEntities.size() + " records (" + (endTime - updateStartTime) + "ms)");
-//			LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
-//					"Total time taken to complete process of " + credentialEntities.size() + " records (" + (endTime - startTime) + "ms)");
+			LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
+					"Total time taken to complete process of " + credentialEntities.size() + " records (" + (endTime - startTime) + "ms)");
 //		}
 
 		return RepeatStatus.FINISHED;
