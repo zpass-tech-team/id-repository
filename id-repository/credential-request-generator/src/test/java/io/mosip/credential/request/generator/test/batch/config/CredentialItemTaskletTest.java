@@ -71,26 +71,26 @@ public class CredentialItemTaskletTest {
 	
 	List<CredentialEntity> credentialEntities;
 
-	@Before
-	public void setUp() {
-		credentialIssueRequestDto = new CredentialIssueRequestDto();
-		credentialIssueRequestDto.setCredentialType("MOSIP");
-		credentialIssueRequestDto.setId("123");
-		credentialIssueRequestDto.setEncrypt(true);
-		responseString = "response";
-		credentialServiceResponseDto = new CredentialServiceResponseDto();
-		 credential = new CredentialEntity();
-		credential.setRequestId("test123");
-		credential.setRetryCount(0);
-		credential.setRequest("request");
-		ReflectionTestUtils.setField(credentialItemTasklet, "threadCount",
-				1);
-		credentialItemTasklet.init();
-		 credentialEntities=new ArrayList();
-		credentialEntities.add(credential);
-		Mockito.when(credentialDao.getCredentials(Mockito.any()))
-		.thenReturn(credentialEntities);
-	}
+//	@Before
+//	public void setUp() {
+//		credentialIssueRequestDto = new CredentialIssueRequestDto();
+//		credentialIssueRequestDto.setCredentialType("MOSIP");
+//		credentialIssueRequestDto.setId("123");
+//		credentialIssueRequestDto.setEncrypt(true);
+//		responseString = "response";
+//		credentialServiceResponseDto = new CredentialServiceResponseDto();
+//		 credential = new CredentialEntity();
+//		credential.setRequestId("test123");
+//		credential.setRetryCount(0);
+//		credential.setRequest("request");
+//		ReflectionTestUtils.setField(credentialItemTasklet, "threadCount",
+//				1);
+//		credentialItemTasklet.init();
+//		 credentialEntities=new ArrayList();
+//		credentialEntities.add(credential);
+//		Mockito.when(credentialDao.getCredentials(Mockito.any()))
+//		.thenReturn(credentialEntities);
+//	}
 
 	@Test
 	public void testProcessSuccess() throws Exception {

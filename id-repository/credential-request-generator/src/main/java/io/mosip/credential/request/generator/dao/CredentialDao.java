@@ -1,6 +1,7 @@
 package io.mosip.credential.request.generator.dao;
 import io.mosip.credential.request.generator.entity.CredentialEntity;
 import io.mosip.credential.request.generator.repositary.CredentialRepositary;
+import io.mosip.idrepository.core.entity.CredentialRequestStatus;
 import io.mosip.idrepository.core.logger.IdRepoLogger;
 import io.mosip.idrepository.core.security.IdRepoSecurityManager;
 import io.mosip.kernel.core.logger.spi.Logger;
@@ -50,13 +51,13 @@ public class CredentialDao {
     }
 
 
-    public List<CredentialEntity> getCredentials(String batchId) {
+    public List<CredentialRequestStatus> getCredentials(String batchId) {
 
         LOGGER.info(IdRepoSecurityManager.getUser(), "CredentialDao", "batchid = " + batchId,
                 "Inside getCredentials() method");
 
         long startTime = System.currentTimeMillis();
-        List<CredentialEntity> credentialEntities = crdentialRepo.findCredentialByStatusCode(status, pageSize);
+        List<CredentialRequestStatus> credentialEntities = crdentialRepo.findCredentialByStatusCode(status, pageSize);
         long endTime = System.currentTimeMillis();
 
         LOGGER.info(IdRepoSecurityManager.getUser(), "CredentialDao", "batchid = " + batchId,
