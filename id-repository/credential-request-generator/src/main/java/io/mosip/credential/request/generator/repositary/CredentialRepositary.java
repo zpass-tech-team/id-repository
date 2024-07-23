@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import javax.persistence.LockModeType;
 import javax.persistence.QueryHint;
 
-import io.mosip.idrepository.core.entity.CredentialRequestStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -53,14 +52,10 @@ public interface CredentialRepositary extends JpaRepository<CredentialEntity, St
 	@Query("select c from CredentialEntity c where c.statusCode=:statusCode")
 	Page<CredentialEntity> findCredentialByStatusCode(@Param("statusCode")String statusCode, Pageable pageable);
 
-//	@Transactional
-//	@Query(value = "SELECT * FROM credential_transaction ct"
-//			+ " WHERE ct.status_code=:statusCode ORDER BY cr_dtimes FOR UPDATE SKIP LOCKED LIMIT :pageSize", nativeQuery = true)
-//	List<CredentialEntity> findCredentialByStatusCode(@Param("statusCode")String statusCode, @Param("pageSize") int pageSize);
 	@Transactional
-	@Query(value = "SELECT * FROM credential_request_status crs"
-			+ " WHERE crs.status=:statusCode ORDER BY crs.cr_dtimes asc FOR UPDATE SKIP LOCKED LIMIT :pageSize", nativeQuery = true)
-	List<CredentialRequestStatus> findCredentialByStatusCode(@Param("statusCode")String statusCode, @Param("pageSize") int pageSize);
+	@Query(value = "SELECT * FROM credential_transaction ct"
+			+ " WHERE ct.status_code=:statusCode ORDER BY cr_dtimes FOR UPDATE SKIP LOCKED LIMIT :pageSize", nativeQuery = true)
+	List<CredentialEntity> findCredentialByStatusCode(@Param("statusCode")String statusCode, @Param("pageSize") int pageSize);
 
 	/**
 	 * Find credential by status codes.
