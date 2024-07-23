@@ -85,9 +85,9 @@ public class CredentialStatusManager {
 	
 //	@Async("credentialStatusManagerJobExecutor")
 	public void triggerEventNotifications() {
-		handleDeletedRequests();
-		handleExpiredRequests();
-		handleNewOrUpdatedRequests();
+//		handleDeletedRequests();
+//		handleExpiredRequests();
+//		handleNewOrUpdatedRequests();
 	}
 
 	private void handleDeletedRequests() {
@@ -121,36 +121,36 @@ public class CredentialStatusManager {
 	}
 
 	public void handleNewOrUpdatedRequests() {
-//		try {
-//			mosipLogger.info(IdRepoSecurityManager.getUser(), this.getClass().getSimpleName(), "handleNewOrUpdatedRequests",
-//					"Inside handleNewOrUpdatedRequests method");
-//			String activeStatus = EnvUtil.getUinActiveStatus();
-//			Sort sort = Sort.by(Sort.Direction.ASC, "crDTimes");
-//			Pageable pageable = PageRequest.of(0, pageSize, sort);
-//			List<CredentialRequestStatus> newIssueRequestList = statusRepo
-//					.findByStatus(CredentialRequestStatusLifecycle.NEW.toString(), pageSize);
-//			mosipLogger.info(IdRepoSecurityManager.getUser(), this.getClass().getSimpleName(), "handleNewOrUpdatedRequests",
-//					"Total records picked from credential_request_status table for processing is " + newIssueRequestList.size());
-//			for (CredentialRequestStatus credentialRequestStatus : newIssueRequestList) {
-//				cancelIssuedRequest(credentialRequestStatus.getRequestId());
-//				mosipLogger.info(IdRepoSecurityManager.getUser(), this.getClass().getSimpleName(), "handleNewOrUpdatedRequests",
-//						"Publish to credentailStatusUpdateTopic for requestId " + credentialRequestStatus.getRequestId());
-//				String idvId = decryptId(credentialRequestStatus.getIndividualId());
-//				mosipLogger.info(IdRepoSecurityManager.getUser(), this.getClass().getSimpleName(), "handleNewOrUpdatedRequests",
-//						"IndividualId decryption is completed for requestId " + credentialRequestStatus.getRequestId());
-//				credManager.notifyUinCredential(idvId, credentialRequestStatus.getIdExpiryTimestamp(), activeStatus,
-//						Objects.nonNull(credentialRequestStatus.getUpdatedBy()), null,
-//						uinHashSaltRepo::retrieveSaltById, this::credentialRequestResponseConsumer,
-//						this::idaEventConsumer, List.of(credentialRequestStatus.getPartnerId()),credentialRequestStatus.getRequestId());
-//				deleteDummyPartner(credentialRequestStatus);
-//				mosipLogger.info(IdRepoSecurityManager.getUser(), this.getClass().getSimpleName(), "handleNewOrUpdatedRequests",
-//						"Credential request status job completed for requestId " + credentialRequestStatus.getRequestId());
-//			}
-//			mosipLogger.info(IdRepoSecurityManager.getUser(), this.getClass().getSimpleName(), "handleNewOrUpdatedRequests",
-//					newIssueRequestList.size() + " total records processed.");
-//		} catch (Exception e) {
-//			mosipLogger.error(IdRepoSecurityManager.getUser(), this.getClass().getSimpleName(), "handleNewOrUpdatedRequests", ExceptionUtils.getStackTrace(e));
-//		}
+		try {
+			mosipLogger.info(IdRepoSecurityManager.getUser(), this.getClass().getSimpleName(), "handleNewOrUpdatedRequests",
+					"Inside handleNewOrUpdatedRequests method");
+			String activeStatus = EnvUtil.getUinActiveStatus();
+			Sort sort = Sort.by(Sort.Direction.ASC, "crDTimes");
+			Pageable pageable = PageRequest.of(0, pageSize, sort);
+			List<CredentialRequestStatus> newIssueRequestList = statusRepo
+					.findByStatus(CredentialRequestStatusLifecycle.NEW.toString(), pageSize);
+			mosipLogger.info(IdRepoSecurityManager.getUser(), this.getClass().getSimpleName(), "handleNewOrUpdatedRequests",
+					"Total records picked from credential_request_status table for processing is " + newIssueRequestList.size());
+			for (CredentialRequestStatus credentialRequestStatus : newIssueRequestList) {
+				cancelIssuedRequest(credentialRequestStatus.getRequestId());
+				mosipLogger.info(IdRepoSecurityManager.getUser(), this.getClass().getSimpleName(), "handleNewOrUpdatedRequests",
+						"Publish to credentailStatusUpdateTopic for requestId " + credentialRequestStatus.getRequestId());
+				String idvId = decryptId(credentialRequestStatus.getIndividualId());
+				mosipLogger.info(IdRepoSecurityManager.getUser(), this.getClass().getSimpleName(), "handleNewOrUpdatedRequests",
+						"IndividualId decryption is completed for requestId " + credentialRequestStatus.getRequestId());
+				credManager.notifyUinCredential(idvId, credentialRequestStatus.getIdExpiryTimestamp(), activeStatus,
+						Objects.nonNull(credentialRequestStatus.getUpdatedBy()), null,
+						uinHashSaltRepo::retrieveSaltById, this::credentialRequestResponseConsumer,
+						this::idaEventConsumer, List.of(credentialRequestStatus.getPartnerId()),credentialRequestStatus.getRequestId());
+				deleteDummyPartner(credentialRequestStatus);
+				mosipLogger.info(IdRepoSecurityManager.getUser(), this.getClass().getSimpleName(), "handleNewOrUpdatedRequests",
+						"Credential request status job completed for requestId " + credentialRequestStatus.getRequestId());
+			}
+			mosipLogger.info(IdRepoSecurityManager.getUser(), this.getClass().getSimpleName(), "handleNewOrUpdatedRequests",
+					newIssueRequestList.size() + " total records processed.");
+		} catch (Exception e) {
+			mosipLogger.error(IdRepoSecurityManager.getUser(), this.getClass().getSimpleName(), "handleNewOrUpdatedRequests", ExceptionUtils.getStackTrace(e));
+		}
 	}
 
 	@WithRetry
