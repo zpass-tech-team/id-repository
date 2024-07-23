@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 //@ConditionalOnBean(name = { "idRepoDataSource" })
 public class CredentialRequestStatus {
 
+	@Column(name = "individual_id")
 	private String individualId;
 
 	@Id
