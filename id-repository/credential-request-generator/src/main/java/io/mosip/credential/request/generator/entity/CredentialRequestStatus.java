@@ -27,14 +27,19 @@ public class CredentialRequestStatus {
 	@Column(name = "partner_id")
 	private String partnerId;
 
+	@Column(name = "request_id")
 	private String requestId;
 
+	@Column(name = "token_id")
 	private String tokenId;
 
+	@Column(name = "status")
 	private String status;
 
+	@Column(name = "id_transaction_limit")
 	private Integer idTransactionLimit;
 
+	@Column(name = "id_expiry_timestamp")
 	private LocalDateTime idExpiryTimestamp;
 
 	@NotNull
