@@ -110,48 +110,48 @@ public class CredentialItemReprocessTasklet implements Tasklet {
 								"started processing item : " + credential.getRequestId());
 						String decryptedData = new String(CryptoUtil
 								.decodeURLSafeBase64(encryptDecryptData(ApiName.DECRYPTION, credential.getRequest())));
-					CredentialIssueRequestDto credentialIssueRequestDto = mapper.readValue(decryptedData,
-							CredentialIssueRequestDto.class);
+						CredentialIssueRequestDto credentialIssueRequestDto = mapper.readValue(decryptedData,
+								CredentialIssueRequestDto.class);
 
-					CredentialServiceRequestDto credentialServiceRequestDto = new CredentialServiceRequestDto();
-					credentialServiceRequestDto.setCredentialType(credentialIssueRequestDto.getCredentialType());
-					credentialServiceRequestDto.setId(credentialIssueRequestDto.getId());
-					credentialServiceRequestDto.setIssuer(credentialIssueRequestDto.getIssuer());
-					credentialServiceRequestDto.setRecepiant(credentialIssueRequestDto.getIssuer());
-					credentialServiceRequestDto.setSharableAttributes(credentialIssueRequestDto.getSharableAttributes());
-					credentialServiceRequestDto.setUser(credentialIssueRequestDto.getUser());
-					credentialServiceRequestDto.setRequestId(credential.getRequestId());
-					credentialServiceRequestDto.setEncrypt(credentialIssueRequestDto.isEncrypt());
-					credentialServiceRequestDto.setEncryptionKey(credentialIssueRequestDto.getEncryptionKey());
-					credentialServiceRequestDto.setAdditionalData(credentialIssueRequestDto.getAdditionalData());
-					LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_REPROCESS_TASKLET, "batchid = " + batchId,
-							"Calling CRDENTIALSERVICE : " + credential.getRequestId());
-					String responseString = restUtil.postApi(ApiName.CRDENTIALSERVICE, null, "", "", MediaType.APPLICATION_JSON,
-							credentialServiceRequestDto, String.class);
+						CredentialServiceRequestDto credentialServiceRequestDto = new CredentialServiceRequestDto();
+						credentialServiceRequestDto.setCredentialType(credentialIssueRequestDto.getCredentialType());
+						credentialServiceRequestDto.setId(credentialIssueRequestDto.getId());
+						credentialServiceRequestDto.setIssuer(credentialIssueRequestDto.getIssuer());
+						credentialServiceRequestDto.setRecepiant(credentialIssueRequestDto.getIssuer());
+						credentialServiceRequestDto.setSharableAttributes(credentialIssueRequestDto.getSharableAttributes());
+						credentialServiceRequestDto.setUser(credentialIssueRequestDto.getUser());
+						credentialServiceRequestDto.setRequestId(credential.getRequestId());
+						credentialServiceRequestDto.setEncrypt(credentialIssueRequestDto.isEncrypt());
+						credentialServiceRequestDto.setEncryptionKey(credentialIssueRequestDto.getEncryptionKey());
+						credentialServiceRequestDto.setAdditionalData(credentialIssueRequestDto.getAdditionalData());
+						LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_REPROCESS_TASKLET, "batchid = " + batchId,
+								"Calling CRDENTIALSERVICE : " + credential.getRequestId());
+						String responseString = restUtil.postApi(ApiName.CRDENTIALSERVICE, null, "", "", MediaType.APPLICATION_JSON,
+								credentialServiceRequestDto, String.class);
 
-					LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_REPROCESS_TASKLET, "batchid = " + batchId,
-							"Received response from CRDENTIALSERVICE : " + credential.getRequestId());
-					CredentialServiceResponseDto responseObject = mapper.readValue(responseString,
-							CredentialServiceResponseDto.class);
+						LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_REPROCESS_TASKLET, "batchid = " + batchId,
+								"Received response from CRDENTIALSERVICE : " + credential.getRequestId());
+						CredentialServiceResponseDto responseObject = mapper.readValue(responseString,
+								CredentialServiceResponseDto.class);
 
-					if (responseObject != null && responseObject.getErrors() != null && !responseObject.getErrors().isEmpty()) {
-						LOGGER.debug(IdRepoSecurityManager.getUser(), LoggerFileConstant.REQUEST_ID.toString(),
-								credential.getRequestId(), responseObject.toString());
-						ErrorDTO error = responseObject.getErrors().get(0);
-						credential.setStatusCode(CredentialStatusCode.FAILED.name());
-						credential.setStatusComment(error.getMessage());
-							credential.setRetryCount(retryCount + 1);
+						if (responseObject != null && responseObject.getErrors() != null && !responseObject.getErrors().isEmpty()) {
+							LOGGER.debug(IdRepoSecurityManager.getUser(), LoggerFileConstant.REQUEST_ID.toString(),
+									credential.getRequestId(), responseObject.toString());
+							ErrorDTO error = responseObject.getErrors().get(0);
+							credential.setStatusCode(CredentialStatusCode.FAILED.name());
+							credential.setStatusComment(error.getMessage());
+								credential.setRetryCount(retryCount + 1);
 
-					} else {
-						CredentialServiceResponse credentialServiceResponse = responseObject.getResponse();
-						credential.setCredentialId(credentialServiceResponse.getCredentialId());
-						credential.setDataShareUrl(credentialServiceResponse.getDataShareUrl());
-						credential.setIssuanceDate(credentialServiceResponse.getIssuanceDate());
-						credential.setStatusCode(credentialServiceResponse.getStatus());
-						credential.setSignature(credentialServiceResponse.getSignature());
-						credential.setStatusComment("credentials issued to partner");
+						} else {
+							CredentialServiceResponse credentialServiceResponse = responseObject.getResponse();
+							credential.setCredentialId(credentialServiceResponse.getCredentialId());
+							credential.setDataShareUrl(credentialServiceResponse.getDataShareUrl());
+							credential.setIssuanceDate(credentialServiceResponse.getIssuanceDate());
+							credential.setStatusCode(credentialServiceResponse.getStatus());
+							credential.setSignature(credentialServiceResponse.getSignature());
+							credential.setStatusComment("credentials issued to partner");
 
-					}
+						}
 
 					} else {
 						credential.setStatusCode(CredentialStatusCode.FAILED.name());
