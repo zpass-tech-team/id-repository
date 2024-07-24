@@ -55,8 +55,13 @@ public class CredentialTransactionInterceptor extends EmptyInterceptor {
 			String decryptedData;
 			String requestValue = (String) state[indexOfData];
 			try {
+				long startTime = System.currentTimeMillis();
+				CredentialEntity credEntity = (CredentialEntity) entity;
 				decryptedData = new String(CryptoUtil
 						.decodeURLSafeBase64(encryptDecryptData(ApiName.DECRYPTION, requestValue)));
+				long endTime = System.currentTimeMillis();
+				LOGGER.info(
+						"Time taken to decrypt credential request data " + credEntity.getRequestId() + " " + (endTime - startTime) + " ms)");
 			} catch (Exception e) {
 				LOGGER.debug(
 						"Decryption failed. Falling back to treat the data as un-encrypted one for backward compatibility with 1.1.5.5\n "
