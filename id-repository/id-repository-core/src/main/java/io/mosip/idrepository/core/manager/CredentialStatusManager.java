@@ -85,9 +85,9 @@ public class CredentialStatusManager {
 	
 //	@Async("credentialStatusManagerJobExecutor")
 	public void triggerEventNotifications() {
-		handleDeletedRequests();
-		handleExpiredRequests();
-		handleNewOrUpdatedRequests();
+//		handleDeletedRequests();
+//		handleExpiredRequests();
+//		handleNewOrUpdatedRequests();
 	}
 
 	private void handleDeletedRequests() {
