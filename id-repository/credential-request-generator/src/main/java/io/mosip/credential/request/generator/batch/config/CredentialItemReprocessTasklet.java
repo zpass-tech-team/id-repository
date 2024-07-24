@@ -2,12 +2,21 @@ package io.mosip.credential.request.generator.batch.config;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 
 import javax.annotation.PostConstruct;
 
+import io.mosip.credential.request.generator.dto.CryptomanagerRequestDto;
+import io.mosip.credential.request.generator.exception.CredentialRequestGeneratorUncheckedException;
+import io.mosip.credential.request.generator.interceptor.CredentialTransactionInterceptor;
+import io.mosip.idrepository.core.util.EnvUtil;
+import io.mosip.kernel.core.http.RequestWrapper;
+import io.mosip.kernel.core.http.ResponseWrapper;
+import io.mosip.kernel.core.util.CryptoUtil;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -99,7 +108,9 @@ public class CredentialItemReprocessTasklet implements Tasklet {
 							|| (CredentialStatusCode.RETRY.name().equalsIgnoreCase(credential.getStatusCode()))) {
 						LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_REPROCESS_TASKLET, "batchid = " + batchId,
 								"started processing item : " + credential.getRequestId());
-					CredentialIssueRequestDto credentialIssueRequestDto = mapper.readValue(credential.getRequest(),
+						String decryptedData = new String(CryptoUtil
+								.decodeURLSafeBase64(encryptDecryptData(ApiName.DECRYPTION, credential.getRequest())));
+					CredentialIssueRequestDto credentialIssueRequestDto = mapper.readValue(decryptedData,
 							CredentialIssueRequestDto.class);
 
 					CredentialServiceRequestDto credentialServiceRequestDto = new CredentialServiceRequestDto();
@@ -195,5 +206,32 @@ public class CredentialItemReprocessTasklet implements Tasklet {
 			credentialDao.update(batchId, credentialEntities);
 
 		return RepeatStatus.FINISHED;
+	}
+
+	private String encryptDecryptData(ApiName api, String request) {
+		try {
+			RequestWrapper<CryptomanagerRequestDto> requestWrapper = new RequestWrapper<>();
+			CryptomanagerRequestDto cryptoRequest = new CryptomanagerRequestDto();
+			cryptoRequest.setApplicationId(EnvUtil.getAppId());
+			cryptoRequest.setData(request);
+			cryptoRequest.setReferenceId(EnvUtil.getCredCryptoRefId());
+			requestWrapper.setRequest(cryptoRequest);
+			cryptoRequest.setTimeStamp(DateUtils.getUTCCurrentDateTime());
+			requestWrapper.setRequest(cryptoRequest);
+			ResponseWrapper<Map<String, String>> restResponse = restUtil.postApi(api, null, null, null,
+					MediaType.APPLICATION_JSON_UTF8, requestWrapper, ResponseWrapper.class);
+			if (Objects.isNull(restResponse.getErrors()) || restResponse.getErrors().isEmpty()) {
+				return restResponse.getResponse().get("data");
+			} else {
+				IdRepoLogger.getLogger(CredentialTransactionInterceptor.class)
+						.error("KEYMANAGER ERROR RESPONSE -> " + restResponse);
+				throw new CredentialRequestGeneratorUncheckedException(
+						CredentialRequestErrorCodes.ENCRYPTION_DECRYPTION_FAILED);
+			}
+		} catch (Exception e) {
+			IdRepoLogger.getLogger(CredentialTransactionInterceptor.class).error(ExceptionUtils.getStackTrace(e));
+			throw new CredentialRequestGeneratorUncheckedException(
+					CredentialRequestErrorCodes.ENCRYPTION_DECRYPTION_FAILED, e);
+		}
 	}
 }
