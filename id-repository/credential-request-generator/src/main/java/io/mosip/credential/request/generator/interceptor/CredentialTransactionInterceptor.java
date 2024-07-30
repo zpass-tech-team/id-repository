@@ -50,26 +50,26 @@ public class CredentialTransactionInterceptor extends EmptyInterceptor {
 
 	@Override
 	public boolean onLoad(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
-//		if (entity instanceof CredentialEntity) {
-//			int indexOfData = Arrays.asList(propertyNames).indexOf(REQUEST);
-//			String decryptedData;
-//			String requestValue = (String) state[indexOfData];
-//			try {
-//				long startTime = System.currentTimeMillis();
-//				CredentialEntity credEntity = (CredentialEntity) entity;
-//				decryptedData = new String(CryptoUtil
-//						.decodeURLSafeBase64(encryptDecryptData(ApiName.DECRYPTION, requestValue)));
-//				long endTime = System.currentTimeMillis();
-//				LOGGER.info(
-//						"Time taken to decrypt credential request data " + credEntity.getRequestId() + " " + (endTime - startTime) + " ms)");
-//			} catch (Exception e) {
-//				LOGGER.debug(
-//						"Decryption failed. Falling back to treat the data as un-encrypted one for backward compatibility with 1.1.5.5\n "
-//								+ ExceptionUtils.getStackTrace(e));
-//				decryptedData = requestValue;
-//			}
-//			state[indexOfData] = decryptedData;
-//		}
+		if (entity instanceof CredentialEntity) {
+			int indexOfData = Arrays.asList(propertyNames).indexOf(REQUEST);
+			String decryptedData;
+			String requestValue = (String) state[indexOfData];
+			try {
+				long startTime = System.currentTimeMillis();
+				CredentialEntity credEntity = (CredentialEntity) entity;
+				decryptedData = new String(CryptoUtil
+						.decodeURLSafeBase64(encryptDecryptData(ApiName.DECRYPTION, requestValue)));
+				long endTime = System.currentTimeMillis();
+				LOGGER.info(
+						"Time taken to decrypt credential request data " + credEntity.getRequestId() + " " + (endTime - startTime) + " ms)");
+			} catch (Exception e) {
+				LOGGER.debug(
+						"Decryption failed. Falling back to treat the data as un-encrypted one for backward compatibility with 1.1.5.5\n "
+								+ ExceptionUtils.getStackTrace(e));
+				decryptedData = requestValue;
+			}
+			state[indexOfData] = decryptedData;
+		}
 		return super.onLoad(entity, id, state, propertyNames, types);
 	}
 	
