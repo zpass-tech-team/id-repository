@@ -94,9 +94,9 @@ public class CredentialItemTasklet implements Tasklet {
 				try {
 					LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
 							"started processing item : " + credential.getRequestId());
-//					String decryptedData = new String(CryptoUtil
-//							.decodeURLSafeBase64(encryptDecryptData(ApiName.DECRYPTION, credential.getRequest())));
-					CredentialIssueRequestDto credentialIssueRequestDto = mapper.readValue(credential.getRequest(), CredentialIssueRequestDto.class);
+					String decryptedData = new String(CryptoUtil
+							.decodeURLSafeBase64(encryptDecryptData(ApiName.DECRYPTION, credential.getRequest())));
+					CredentialIssueRequestDto credentialIssueRequestDto = mapper.readValue(decryptedData, CredentialIssueRequestDto.class);
 					CredentialServiceRequestDto credentialServiceRequestDto = new CredentialServiceRequestDto();
 					credentialServiceRequestDto.setCredentialType(credentialIssueRequestDto.getCredentialType());
 					credentialServiceRequestDto.setId(credentialIssueRequestDto.getId());
