@@ -69,4 +69,9 @@ public interface CredentialRepositary<T extends CredentialEntity, E> extends Bas
 	@QueryHints({ @QueryHint(name = "javax.persistence.lock.timeout", value = "1") })
 	@Query("SELECT crdn FROM CredentialEntity crdn WHERE crdn.statusCode in :statusCodes")
 	Page<CredentialEntity> findCredentialByStatusCodes(@Param("statusCodes") String[] statusCodes, Pageable pageable);
+
+	@Transactional
+	@Query(value = "SELECT * FROM credential_transaction ct"
+			+ " WHERE ct.status_code in :statusCodes ORDER BY cr_dtimes FOR UPDATE SKIP LOCKED LIMIT :pageSize", nativeQuery = true)
+	List<CredentialEntity> findCredentialByStatusCodes(@Param("statusCodes")String[] statusCodes, @Param("pageSize") int pageSize);
 }
