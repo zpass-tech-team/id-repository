@@ -13,6 +13,7 @@ import io.mosip.credential.request.generator.exception.CredentialRequestGenerato
 import io.mosip.credential.request.generator.interceptor.CredentialTransactionInterceptor;
 import io.mosip.credential.request.generator.util.RestUtil;
 import io.mosip.credential.request.generator.util.TrimExceptionMessage;
+import io.mosip.credential.request.generator.helper.CredentialIssueRequestHelper;
 import io.mosip.idrepository.core.dto.*;
 import io.mosip.idrepository.core.logger.IdRepoLogger;
 import io.mosip.idrepository.core.security.IdRepoSecurityManager;
@@ -62,6 +63,9 @@ public class CredentialItemTasklet implements Tasklet {
 	@Autowired
 	private CredentialDao credentialDao;
 
+	@Autowired
+	private CredentialIssueRequestHelper credentialIssueRequestHelper;
+
 	/** The Constant LOGGER. */
 	private static final Logger LOGGER = IdRepoLogger.getLogger(CredentialItemTasklet.class);
 	
@@ -94,10 +98,7 @@ public class CredentialItemTasklet implements Tasklet {
 				try {
 					LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
 							"started processing item : " + credential.getRequestId());
-//					String decryptedData = new String(CryptoUtil
-//							.decodeURLSafeBase64(encryptDecryptData(ApiName.DECRYPTION, credential.getRequest())));
-//					CredentialIssueRequestDto credentialIssueRequestDto = mapper.readValue(decryptedData, CredentialIssueRequestDto.class);
-					CredentialIssueRequestDto credentialIssueRequestDto = mapper.readValue(credential.getRequest(), CredentialIssueRequestDto.class);
+					CredentialIssueRequestDto credentialIssueRequestDto = credentialIssueRequestHelper.getCredentialIssueRequestDto(credential);
 					CredentialServiceRequestDto credentialServiceRequestDto = new CredentialServiceRequestDto();
 					credentialServiceRequestDto.setCredentialType(credentialIssueRequestDto.getCredentialType());
 					credentialServiceRequestDto.setId(credentialIssueRequestDto.getId());
@@ -200,32 +201,5 @@ public class CredentialItemTasklet implements Tasklet {
 		}
 
 		return RepeatStatus.FINISHED;
-	}
-
-	private String encryptDecryptData(ApiName api, String request) {
-		try {
-			RequestWrapper<CryptomanagerRequestDto> requestWrapper = new RequestWrapper<>();
-			CryptomanagerRequestDto cryptoRequest = new CryptomanagerRequestDto();
-			cryptoRequest.setApplicationId(EnvUtil.getAppId());
-			cryptoRequest.setData(request);
-			cryptoRequest.setReferenceId(EnvUtil.getCredCryptoRefId());
-			requestWrapper.setRequest(cryptoRequest);
-			cryptoRequest.setTimeStamp(DateUtils.getUTCCurrentDateTime());
-			requestWrapper.setRequest(cryptoRequest);
-			ResponseWrapper<Map<String, String>> restResponse = restUtil.postApi(api, null, null, null,
-					MediaType.APPLICATION_JSON_UTF8, requestWrapper, ResponseWrapper.class);
-			if (Objects.isNull(restResponse.getErrors()) || restResponse.getErrors().isEmpty()) {
-				return restResponse.getResponse().get("data");
-			} else {
-				IdRepoLogger.getLogger(CredentialTransactionInterceptor.class)
-						.error("KEYMANAGER ERROR RESPONSE -> " + restResponse);
-				throw new CredentialRequestGeneratorUncheckedException(
-						CredentialRequestErrorCodes.ENCRYPTION_DECRYPTION_FAILED);
-			}
-		} catch (Exception e) {
-			IdRepoLogger.getLogger(CredentialTransactionInterceptor.class).error(ExceptionUtils.getStackTrace(e));
-			throw new CredentialRequestGeneratorUncheckedException(
-					CredentialRequestErrorCodes.ENCRYPTION_DECRYPTION_FAILED, e);
-		}
 	}
 }

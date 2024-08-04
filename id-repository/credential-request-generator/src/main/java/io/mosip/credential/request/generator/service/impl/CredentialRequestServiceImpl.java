@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import io.mosip.credential.request.generator.helper.CredentialIssueRequestHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
@@ -101,6 +102,9 @@ public class CredentialRequestServiceImpl implements CredentialRequestService {
 
 	@Autowired
 	private AuditRequestBuilder auditBuilder;
+
+	@Autowired
+	private CredentialIssueRequestHelper credentialIssueRequestHelper;
 
 	private static final String CANCEL_CREDENTIAL = "cancelCredentialRequest";
 
@@ -245,9 +249,7 @@ public class CredentialRequestServiceImpl implements CredentialRequestService {
 					credentialEntity.setUpdatedBy(IdRepoSecurityManager.getUser());
 					credentialEntity.setStatusComment("Cancel the request");
 					 credentialDao.update(credentialEntity);
-					CredentialIssueRequestDto credentialIssueRequestDto = mapper
-							.readValue(credentialEntity.getRequest(),
-									CredentialIssueRequestDto.class);
+					CredentialIssueRequestDto credentialIssueRequestDto = credentialIssueRequestHelper.getCredentialIssueRequestDto(credentialEntity);
 					credentialIssueResponse = new CredentialIssueResponse();
 					credentialIssueResponse.setId(credentialIssueRequestDto.getId());
 					credentialIssueResponse.setRequestId(requestId);
@@ -319,8 +321,7 @@ public class CredentialRequestServiceImpl implements CredentialRequestService {
 			Optional<CredentialEntity> entity = credentialDao.findById(requestId);
 			if (entity != null && !entity.isEmpty()) {
 				CredentialEntity credentialEntity = entity.get();
-				CredentialIssueRequestDto credentialIssueRequestDto = mapper.readValue(credentialEntity.getRequest(),
-						CredentialIssueRequestDto.class);
+				CredentialIssueRequestDto credentialIssueRequestDto = credentialIssueRequestHelper.getCredentialIssueRequestDto(credentialEntity);
 
 				credentialIssueStatusResponse.setId(credentialIssueRequestDto.getId());
 				credentialIssueStatusResponse.setRequestId(requestId);
@@ -438,8 +439,7 @@ public class CredentialRequestServiceImpl implements CredentialRequestService {
 				List<CredentialEntity> credentialRequestList = pageData.getContent();
 				for (CredentialEntity credential : credentialRequestList) {
 					CredentialRequestIdsDto credentialRequestIdsDto=new CredentialRequestIdsDto();
-					CredentialIssueRequestDto credentialIssueRequestDto = mapper.readValue(credential.getRequest(),
-							CredentialIssueRequestDto.class);
+					CredentialIssueRequestDto credentialIssueRequestDto = credentialIssueRequestHelper.getCredentialIssueRequestDto(credential);
 					credentialRequestIdsDto.setRequestId(credential.getRequestId());
 					credentialRequestIdsDto.setCredentialType(credentialIssueRequestDto.getCredentialType());
 					credentialRequestIdsDto.setPartner(credentialIssueRequestDto.getIssuer());
@@ -526,8 +526,7 @@ public class CredentialRequestServiceImpl implements CredentialRequestService {
 				credentialEntity.setUpdateDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 				credentialEntity.setUpdatedBy(IdRepoSecurityManager.getUser());
 				credentialEntity.setStatusComment("retrigger the request");
-				CredentialIssueRequestDto credentialIssueRequestDto = mapper
-						.readValue(credentialEntity.getRequest(), CredentialIssueRequestDto.class);
+				CredentialIssueRequestDto credentialIssueRequestDto = credentialIssueRequestHelper.getCredentialIssueRequestDto(credentialEntity);
 				credentialDao.save(credentialEntity);
 				credentialIssueResponse = new CredentialIssueResponse();
 				credentialIssueResponse.setId(credentialIssueRequestDto.getId());
