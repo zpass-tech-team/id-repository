@@ -108,11 +108,12 @@ public class CredentialItemReprocessTasklet implements Tasklet {
 							|| (CredentialStatusCode.RETRY.name().equalsIgnoreCase(credential.getStatusCode()))) {
 						LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_REPROCESS_TASKLET, "batchid = " + batchId,
 								"started processing item : " + credential.getRequestId());
-						String decryptedData = new String(CryptoUtil
-								.decodeURLSafeBase64(encryptDecryptData(ApiName.DECRYPTION, credential.getRequest())));
-						CredentialIssueRequestDto credentialIssueRequestDto = mapper.readValue(decryptedData,
+//						String decryptedData = new String(CryptoUtil
+//								.decodeURLSafeBase64(encryptDecryptData(ApiName.DECRYPTION, credential.getRequest())));
+//						CredentialIssueRequestDto credentialIssueRequestDto = mapper.readValue(decryptedData,
+//								CredentialIssueRequestDto.class);
+						CredentialIssueRequestDto credentialIssueRequestDto = mapper.readValue(credential.getRequest(),
 								CredentialIssueRequestDto.class);
-
 						CredentialServiceRequestDto credentialServiceRequestDto = new CredentialServiceRequestDto();
 						credentialServiceRequestDto.setCredentialType(credentialIssueRequestDto.getCredentialType());
 						credentialServiceRequestDto.setId(credentialIssueRequestDto.getId());
