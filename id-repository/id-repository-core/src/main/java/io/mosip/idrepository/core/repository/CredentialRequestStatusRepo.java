@@ -1,24 +1,18 @@
 package io.mosip.idrepository.core.repository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
+import io.mosip.idrepository.core.entity.CredentialRequestStatus;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import io.mosip.idrepository.core.entity.CredentialRequestStatus;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.LockModeType;
-import javax.persistence.QueryHint;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Manoj SP
@@ -45,11 +39,6 @@ public interface CredentialRequestStatusRepo extends JpaRepository<CredentialReq
 	default Optional<CredentialRequestStatus> findByIndividualIdHashAndPartnerId(String individualIdHash, String partnerId) {
 		return this.findByIndividualIdHashAndPartnerIdAndIsDeleted(individualIdHash, partnerId, false);
 	}
-
-//	@Transactional
-//	@Lock(value = LockModeType.PESSIMISTIC_WRITE)
-//	@QueryHints({ @QueryHint(name = "javax.persistence.lock.timeout", value = "-2") })
-//	List<CredentialRequestStatus> findByStatus(String status, Pageable pageable);
 
 	@Transactional
 	@Query(value = "SELECT * FROM credential_request_status crs"

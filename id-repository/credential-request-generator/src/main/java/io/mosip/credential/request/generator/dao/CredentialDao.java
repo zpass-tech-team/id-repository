@@ -1,18 +1,14 @@
 package io.mosip.credential.request.generator.dao;
 
 import io.mosip.credential.request.generator.entity.CredentialEntity;
-import io.mosip.credential.request.generator.entity.CredentialRequestStatus;
 import io.mosip.credential.request.generator.repositary.CredentialRepositary;
-import io.mosip.credential.request.generator.repositary.CredentialRequestStatusRepo;
 import io.mosip.idrepository.core.logger.IdRepoLogger;
 import io.mosip.idrepository.core.security.IdRepoSecurityManager;
 import io.mosip.kernel.core.logger.spi.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -40,9 +36,6 @@ public class CredentialDao {
     @Autowired
     private CredentialRepositary<CredentialEntity, String> crdentialRepo;
 
-    @Autowired
-    private CredentialRequestStatusRepo statusRepo;
-
     public void update(String batchId, List<CredentialEntity> credentialEntities) {
         crdentialRepo.saveAll(credentialEntities);
         LOGGER.info(IdRepoSecurityManager.getUser(), "CredentialDao", "batchid = " + batchId,
@@ -56,7 +49,6 @@ public class CredentialDao {
                 "Inside getCredentials() method");
 
         long startTime = System.currentTimeMillis();
-//        List<CredentialRequestStatus> credentialEntities = statusRepo.findByStatus(status, pageSize);
         List<CredentialEntity> credentialEntities = crdentialRepo.findCredentialByStatusCode(status, pageSize);
         long endTime = System.currentTimeMillis();
 

@@ -42,7 +42,7 @@ import io.mosip.kernel.core.http.ResponseWrapper;
 @ContextConfiguration(classes = { TestContext.class, WebApplicationContext.class})
 public class CredentialDaoTest {
 	@Mock
-	private CredentialRepositary crdentialRepo;
+	private CredentialRepositary<CredentialEntity, String> crdentialRepo;
 
 	@InjectMocks
 	private CredentialDao credentialDao;

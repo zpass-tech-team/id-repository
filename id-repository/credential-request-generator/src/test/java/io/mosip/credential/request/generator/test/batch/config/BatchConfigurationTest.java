@@ -55,7 +55,7 @@ public class BatchConfigurationTest {
 
 	/** The crdential repo. */
 	@Mock
-	private CredentialRepositary crdentialRepo;
+	private CredentialRepositary<CredentialEntity, String> crdentialRepo;
 
 	/** The credential process job. */
 	@Mock

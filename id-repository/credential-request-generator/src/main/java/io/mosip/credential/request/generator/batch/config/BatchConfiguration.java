@@ -144,7 +144,7 @@ public class BatchConfiguration {
 	}
 	
 	@Bean
-	@DependsOn("alterAnnotation")
+//	@DependsOn("alterAnnotation")
 	public Step credentialReProcessStep() throws Exception {
 		return stepBuilderFactory.get("credentialReProcessJob").tasklet(credentialItemReprocessTasklet).build();
 
@@ -190,19 +190,19 @@ public class BatchConfiguration {
 //		values.put("value", propertyLoader().processLockTimeout);
 //		findCredentialByStatusCode.setAccessible(false);
 
-		Method findCredentialByStatusCodes = CredentialRepositary.class.getDeclaredMethod("findCredentialByStatusCodes",
-				String[].class, Pageable.class);
-		findCredentialByStatusCodes.setAccessible(true);
-		QueryHints queryHintsReprocess = findCredentialByStatusCodes.getDeclaredAnnotation(QueryHints.class);
-		QueryHint queryHintReprocess = (QueryHint) queryHintsReprocess.value()[0];
-		java.lang.reflect.InvocationHandler invocationHandlerReprocess = Proxy.getInvocationHandler(queryHintReprocess);
-		Field memberValuesReprocess = invocationHandlerReprocess.getClass().getDeclaredField("memberValues");
-		memberValuesReprocess.setAccessible(true);
-		Map<String, Object> valuesReprocess = (Map<String, Object>) memberValuesReprocess
-				.get(invocationHandlerReprocess);
-
-		valuesReprocess.put("value", propertyLoader().reProcessLockTimeout);
-		findCredentialByStatusCodes.setAccessible(false);
+//		Method findCredentialByStatusCodes = CredentialRepositary.class.getDeclaredMethod("findCredentialByStatusCodes",
+//				String[].class, Pageable.class);
+//		findCredentialByStatusCodes.setAccessible(true);
+//		QueryHints queryHintsReprocess = findCredentialByStatusCodes.getDeclaredAnnotation(QueryHints.class);
+//		QueryHint queryHintReprocess = (QueryHint) queryHintsReprocess.value()[0];
+//		java.lang.reflect.InvocationHandler invocationHandlerReprocess = Proxy.getInvocationHandler(queryHintReprocess);
+//		Field memberValuesReprocess = invocationHandlerReprocess.getClass().getDeclaredField("memberValues");
+//		memberValuesReprocess.setAccessible(true);
+//		Map<String, Object> valuesReprocess = (Map<String, Object>) memberValuesReprocess
+//				.get(invocationHandlerReprocess);
+//
+//		valuesReprocess.put("value", propertyLoader().reProcessLockTimeout);
+//		findCredentialByStatusCodes.setAccessible(false);
 
 		return "";
 

@@ -2,28 +2,19 @@ package io.mosip.credential.request.generator.batch.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.mosip.credential.request.generator.constants.ApiName;
-import io.mosip.credential.request.generator.constants.CredentialRequestErrorCodes;
 import io.mosip.credential.request.generator.constants.CredentialStatusCode;
 import io.mosip.credential.request.generator.dao.CredentialDao;
-import io.mosip.credential.request.generator.dto.CryptomanagerRequestDto;
 import io.mosip.credential.request.generator.entity.CredentialEntity;
-import io.mosip.credential.request.generator.entity.CredentialRequestStatus;
 import io.mosip.credential.request.generator.exception.ApiNotAccessibleException;
-import io.mosip.credential.request.generator.exception.CredentialRequestGeneratorUncheckedException;
-import io.mosip.credential.request.generator.interceptor.CredentialTransactionInterceptor;
+import io.mosip.credential.request.generator.helper.CredentialIssueRequestHelper;
 import io.mosip.credential.request.generator.util.RestUtil;
 import io.mosip.credential.request.generator.util.TrimExceptionMessage;
-import io.mosip.credential.request.generator.helper.CredentialIssueRequestHelper;
 import io.mosip.idrepository.core.dto.*;
 import io.mosip.idrepository.core.logger.IdRepoLogger;
 import io.mosip.idrepository.core.security.IdRepoSecurityManager;
-import io.mosip.idrepository.core.util.EnvUtil;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.exception.IOException;
-import io.mosip.kernel.core.http.RequestWrapper;
-import io.mosip.kernel.core.http.ResponseWrapper;
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.kernel.core.util.CryptoUtil;
 import io.mosip.kernel.core.util.DateUtils;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -39,8 +30,6 @@ import org.springframework.web.client.HttpServerErrorException;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
@@ -191,12 +180,9 @@ public class CredentialItemTasklet implements Tasklet {
 						ExceptionUtils.getStackTrace(e));
 		}
 		if (!CollectionUtils.isEmpty(credentialEntities)) {
-			long updateStartTime = System.currentTimeMillis();
 			credentialDao.update(batchId, credentialEntities);
 			long endTime = System.currentTimeMillis();
-			LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
-					"Total time taken to update " + credentialEntities.size() + " records (" + (endTime - updateStartTime) + "ms)");
-			LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
+			LOGGER.debug(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
 					"Total time taken to complete process of " + credentialEntities.size() + " records (" + (endTime - startTime) + "ms)");
 		}
 
