@@ -171,6 +171,9 @@ public class CredentialItemTasklet implements Tasklet {
 					retryCount = credential.getRetryCount() != null ? credential.getRetryCount() + 1 : 1;
 				}
 			})).get();
+			long endTime = System.currentTimeMillis();
+			LOGGER.debug(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
+					"Total time taken to complete process of " + credentialEntities.size() + " records (" + (endTime - startTime) + "ms)");
 		} catch (InterruptedException e) {
 			LOGGER.error(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
 					ExceptionUtils.getStackTrace(e));
@@ -183,7 +186,7 @@ public class CredentialItemTasklet implements Tasklet {
 			credentialDao.update(batchId, credentialEntities);
 			long endTime = System.currentTimeMillis();
 			LOGGER.debug(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
-					"Total time taken to complete process of " + credentialEntities.size() + " records (" + (endTime - startTime) + "ms)");
+					"Total time taken to complete till update of " + credentialEntities.size() + " records (" + (endTime - startTime) + "ms)");
 		}
 
 		return RepeatStatus.FINISHED;
