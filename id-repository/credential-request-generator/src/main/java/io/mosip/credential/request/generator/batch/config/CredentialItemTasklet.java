@@ -85,9 +85,13 @@ public class CredentialItemTasklet implements Tasklet {
 				TrimExceptionMessage trimMessage = new TrimExceptionMessage();
 				int retryCount = 0;
 				try {
+					long itemStartTime = System.currentTimeMillis();
 					LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
 							"started processing item : " + credential.getRequestId());
 					CredentialIssueRequestDto credentialIssueRequestDto = credentialIssueRequestHelper.getCredentialIssueRequestDto(credential);
+					long decryptEndTime = System.currentTimeMillis();
+					LOGGER.info(IdRepoSecurityManager.getUser(), "Perform" + CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
+							credential.getRequestId() + "Time taken to decrypt : " + (decryptEndTime - itemStartTime) + " ms");
 					CredentialServiceRequestDto credentialServiceRequestDto = new CredentialServiceRequestDto();
 					credentialServiceRequestDto.setCredentialType(credentialIssueRequestDto.getCredentialType());
 					credentialServiceRequestDto.setId(credentialIssueRequestDto.getId());
@@ -105,7 +109,9 @@ public class CredentialItemTasklet implements Tasklet {
 
 					String responseString = restUtil.postApi(ApiName.CRDENTIALSERVICE, null, "", "",
 							MediaType.APPLICATION_JSON, credentialServiceRequestDto, String.class);
-
+					long credEndTime = System.currentTimeMillis();
+					LOGGER.info(IdRepoSecurityManager.getUser(), "Perform" + CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
+							credential.getRequestId() + "Time taken to finish Credential service call : " + (credEndTime - decryptEndTime) + " ms");
 					LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
 							"Received response from CRDENTIALSERVICE : " + credential.getRequestId());
 
@@ -138,6 +144,9 @@ public class CredentialItemTasklet implements Tasklet {
 					}
 					LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
 							"ended processing item : " + credential.getRequestId());
+					long itemEndTime = System.currentTimeMillis();
+					LOGGER.debug(IdRepoSecurityManager.getUser(), "Perform" + CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
+							"Time taken to complete an item (" + (itemEndTime - itemStartTime) + "ms)");
 				} catch (ApiNotAccessibleException e) {
 
 					LOGGER.error(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
@@ -172,7 +181,7 @@ public class CredentialItemTasklet implements Tasklet {
 				}
 			})).get();
 			long endTime = System.currentTimeMillis();
-			LOGGER.debug(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
+			LOGGER.debug(IdRepoSecurityManager.getUser(), "Perform" + CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
 					"Total time taken to complete process of " + credentialEntities.size() + " records (" + (endTime - startTime) + "ms)");
 		} catch (InterruptedException e) {
 			LOGGER.error(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
