@@ -28,6 +28,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecutor;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -188,6 +189,15 @@ public class IdRepoConfig extends IdRepoDataSourceConfig
 	public void setId(Map<String, String> id) {
 		this.id = id;
 	}
+
+	@Value("${mosip.idrepo.identity-core-pool-size:3}")
+	private int corePoolSize;
+
+	@Value("${mosip.idrepo.identity-max-pool-size:3}")
+	private int maxPoolSize;
+
+	@Value("${mosip.idrepo.identity-queue-capacity:500}")
+	private int queueCapacity;
 
 	/**
 	 * Sets the allowed bio types.
@@ -352,5 +362,25 @@ public class IdRepoConfig extends IdRepoDataSourceConfig
 			mosipLogger.info(monitoringLog, threadPoolTaskExecutor.getThreadNamePrefix(),
 					threadPoolTaskExecutor.getActiveCount(),
 					threadPoolTaskExecutor.getThreadPoolExecutor().getTaskCount(), threadPoolQueueSize);
+	}
+
+	/*
+	 * This bean is returned because for async task the security context needs to be
+	 * passed.
+	 *
+	 */
+	@Bean("withSecurityContext")
+	public DelegatingSecurityContextAsyncTaskExecutor taskExecutor() {
+		return new DelegatingSecurityContextAsyncTaskExecutor(threadPoolTaskExecutor());
+	}
+
+	private ThreadPoolTaskExecutor threadPoolTaskExecutor() {
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setCorePoolSize(corePoolSize);
+		executor.setMaxPoolSize(maxPoolSize);
+		executor.setQueueCapacity(queueCapacity);
+		executor.setThreadNamePrefix("idrepo-");
+		executor.initialize();
+		return executor;
 	}
 }
