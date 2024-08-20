@@ -287,8 +287,12 @@ public class IdRepoSecurityManager {
 	 */
 	private byte[] encryptDecryptData(final RestRequestDTO restRequest) throws IdRepoAppException {
 		try {
+			long startTime = System.currentTimeMillis();
+			mosipLogger.info(IdRepoSecurityManager.getUser(), ID_REPO_SECURITY_MANAGER, ENCRYPT_DECRYPT_DATA,
+					"Before requestSync call");
 			ObjectNode response = restHelper.requestSync(restRequest);
-
+			mosipLogger.info(IdRepoSecurityManager.getUser(), ID_REPO_SECURITY_MANAGER, ENCRYPT_DECRYPT_DATA,
+					"After requestSync call - " + (System.currentTimeMillis() - startTime) + " ms");
 			if (response.has(RESPONSE) && Objects.nonNull(response.get(RESPONSE))
 					&& response.get(RESPONSE).has(DATA) && Objects.nonNull(response.get(RESPONSE).get(DATA))) {
 				return response.get(RESPONSE).get(DATA).asText().getBytes();
