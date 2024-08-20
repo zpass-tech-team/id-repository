@@ -10,7 +10,10 @@ import static io.mosip.idrepository.core.constant.IdRepoErrorConstants.FILE_STOR
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
+import io.mosip.idrepository.core.logger.IdRepoLogger;
+import io.mosip.kernel.core.logger.spi.Logger;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,6 +61,9 @@ public class ObjectStoreHelper {
 	
 	private ObjectStoreAdapter objectStore;
 
+	/** The mosip logger. */
+	private Logger mosipLogger = IdRepoLogger.getLogger(ObjectStoreHelper.class);
+
 	@Autowired
 	public void setObjectStore(ApplicationContext context) {
 		this.objectStore = context.getBean(objectStoreAdapterName, ObjectStoreAdapter.class);
@@ -99,22 +105,29 @@ public class ObjectStoreHelper {
 	
 	public void deleteBiometricObject(String uinHash, String fileRefId) {
 		if (this.biometricObjectExists(uinHash, fileRefId)) {
+			long startTime = System.currentTimeMillis();
 			String objectName = uinHash + SLASH + BIOMETRICS + SLASH + fileRefId;
 			objectStore.deleteObject(objectStoreAccountName, objectStoreBucketName, null, null, objectName);
+			mosipLogger.debug("Time taken for deleteObject call" + (System.currentTimeMillis() - startTime) + " ms");
 		}
 	}
 
 	private boolean exists(String uinHash, boolean isBio, String fileRefId) {
+		long startTime = System.currentTimeMillis();
 		String objectName = uinHash + SLASH + (isBio ? BIOMETRICS : DEMOGRAPHICS) + SLASH + fileRefId;
-		return objectStore.exists(objectStoreAccountName, objectStoreBucketName, null, null, objectName);
+		boolean isExist = objectStore.exists(objectStoreAccountName, objectStoreBucketName, null, null, objectName);
+		mosipLogger.debug("Time taken for exists call" + (System.currentTimeMillis() - startTime) + " ms");
+		return isExist;
 	}
 
 	private void putObject(String uinHash, boolean isBio, String fileRefId, byte[] data, String refId)
 			throws IdRepoAppException {
 		try {
+			long startTime = System.currentTimeMillis();
 			String objectName = uinHash + SLASH + (isBio ? BIOMETRICS : DEMOGRAPHICS) + SLASH + fileRefId;
 			objectStore.putObject(objectStoreAccountName, objectStoreBucketName, null, null, objectName,
 					new ByteArrayInputStream(securityManager.encrypt(data, refId)));
+			mosipLogger.debug("Time taken for putObject call" + (System.currentTimeMillis() - startTime) + " ms");
 		} catch (AmazonS3Exception | FSAdapterException e) {
 			throw new IdRepoAppException(FILE_STORAGE_ACCESS_ERROR, e);
 		}
@@ -122,9 +135,11 @@ public class ObjectStoreHelper {
 
 	private byte[] getObject(String uinHash, boolean isBio, String fileRefId, String refId) throws IdRepoAppException {
 		try {
-		String objectName = uinHash + SLASH + (isBio ? BIOMETRICS : DEMOGRAPHICS) + SLASH + fileRefId;
-		return securityManager.decrypt(IOUtils.toByteArray(
-				objectStore.getObject(objectStoreAccountName, objectStoreBucketName, null, null, objectName)), refId);
+			long startTime = System.currentTimeMillis();
+			String objectName = uinHash + SLASH + (isBio ? BIOMETRICS : DEMOGRAPHICS) + SLASH + fileRefId;
+			InputStream osObject =  objectStore.getObject(objectStoreAccountName, objectStoreBucketName, null, null, objectName);
+			mosipLogger.debug("Time taken for getObject call" + (System.currentTimeMillis() - startTime) + " ms");
+			return securityManager.decrypt(IOUtils.toByteArray(osObject), refId);
 		} catch (AmazonS3Exception | FSAdapterException | IOException e) {
 			throw new IdRepoAppException(IdRepoErrorConstants.FILE_STORAGE_ACCESS_ERROR);
 		}
