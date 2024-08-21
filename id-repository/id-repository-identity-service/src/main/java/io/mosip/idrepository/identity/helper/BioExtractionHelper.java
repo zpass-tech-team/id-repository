@@ -52,12 +52,13 @@ public class BioExtractionHelper {
 			long startTime = System.currentTimeMillis();
 			for (Entry<BiometricType,List<BIR>> entry : birsByType.entrySet()) {
 				BiometricType modality = entry.getKey();
+				mosipLogger.info("Inside extractTemplates - modality - " + modality.value());
 				iBioProviderApi bioProvider = bioApiFactory.getBioProvider(BiometricType.fromValue(modality.value()),
 						BiometricFunction.EXTRACT);
 				List<BIR> extractedTemplates = bioProvider.extractTemplate(entry.getValue(), extractionFormats);
 				allExtractedTemplates.addAll(extractedTemplates);
 			}
-			mosipLogger.info("Time taken for extractTemplates for loop " + (System.currentTimeMillis() - startTime) + " ms");
+			mosipLogger.info("Time taken for extractTemplates " + birsByType.size() + " for loop " + (System.currentTimeMillis() - startTime) + " ms");
 			return allExtractedTemplates;
 			
 		} catch (Exception e) {
