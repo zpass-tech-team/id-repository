@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import io.mosip.idrepository.core.logger.IdRepoLogger;
+import io.mosip.idrepository.core.security.IdRepoSecurityManager;
+import io.mosip.kernel.core.logger.spi.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +28,10 @@ import io.mosip.kernel.biosdk.provider.spi.iBioProviderApi;
  */
 @Component
 public class BioExtractionHelper {
-	
+
+	/** The mosip logger. */
+	private Logger mosipLogger = IdRepoLogger.getLogger(BioExtractionHelper.class);
+
 	/** The bio api factory. */
 	@Autowired
 	private BioAPIFactory bioApiFactory;
@@ -43,7 +49,7 @@ public class BioExtractionHelper {
 			Map<BiometricType, List<BIR>> birsByType = birs.stream().collect(Collectors.groupingBy(bir -> bir.getBdbInfo().getType().get(0)));
 			
 			List<BIR> allExtractedTemplates =  new ArrayList<>();
-			
+			long startTime = System.currentTimeMillis();
 			for (Entry<BiometricType,List<BIR>> entry : birsByType.entrySet()) {
 				BiometricType modality = entry.getKey();
 				iBioProviderApi bioProvider = bioApiFactory.getBioProvider(BiometricType.fromValue(modality.value()),
@@ -51,7 +57,7 @@ public class BioExtractionHelper {
 				List<BIR> extractedTemplates = bioProvider.extractTemplate(entry.getValue(), extractionFormats);
 				allExtractedTemplates.addAll(extractedTemplates);
 			}
-			
+			mosipLogger.info("Time taken for extractTemplates for loop " + (System.currentTimeMillis() - startTime) + " ms");
 			return allExtractedTemplates;
 			
 		} catch (Exception e) {
