@@ -120,7 +120,10 @@ public class IdAuthProvider extends CredentialProvider {
 					zkDataAttribute.setValue(valueStr);
 					if (allowedKycDto.getGroup() != null
 							&& allowedKycDto.getGroup().equalsIgnoreCase(CredentialConstants.CBEFF)) {
+						long splitStartTime = System.currentTimeMillis();
 						bioZkDataAttributes.addAll(splitCbeff(zkDataAttribute.getValue()));
+						LOGGER.debug(IdRepoSecurityManager.getUser(), LoggerFileConstant.REQUEST_ID.toString(), requestId,
+								"Time taken to split CBEFF (" + zkDataAttribute.getValue().length() + ") " + (System.currentTimeMillis() - splitStartTime) + " ms");
 					} else {
 						demoZkDataAttributes.add(zkDataAttribute);
 					}
