@@ -103,7 +103,7 @@ public class CredentialItemTasklet implements Tasklet {
 					credentialServiceRequestDto.setEncrypt(credentialIssueRequestDto.isEncrypt());
 					credentialServiceRequestDto.setEncryptionKey(credentialIssueRequestDto.getEncryptionKey());
 					credentialServiceRequestDto.setAdditionalData(credentialIssueRequestDto.getAdditionalData());
-
+					credential.setRequest(mapper.writeValueAsString(credentialIssueRequestDto));
 					LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_TASKLET, "batchid = " + batchId,
 							"Calling CRDENTIALSERVICE : " + credential.getRequestId());
 

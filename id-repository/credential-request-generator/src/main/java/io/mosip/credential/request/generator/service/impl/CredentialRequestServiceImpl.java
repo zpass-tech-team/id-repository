@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import io.mosip.credential.request.generator.helper.CredentialIssueRequestHelper;
 import io.mosip.idrepository.core.dto.*;
+import io.mosip.idrepository.core.exception.IdRepoExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
@@ -412,14 +413,16 @@ public class CredentialRequestServiceImpl implements CredentialRequestService {
 		}catch (DataAccessLayerException e) {
 			LOGGER.error(IdRepoSecurityManager.getUser(), CREDENTIAL_SERVICE, UPDATE_STATUS_CREDENTIAL,
 					ExceptionUtils.getStackTrace(e));
-			auditHelper.auditError(AuditModules.ID_REPO_CREDENTIAL_REQUEST_GENERATOR, AuditEvents.UPDATE_CREDENTIAL_REQUEST, requestId, IdType.ID,e);
+			auditError(AuditModules.ID_REPO_CREDENTIAL_REQUEST_GENERATOR, AuditEvents.UPDATE_CREDENTIAL_REQUEST, requestId, IdType.ID,e);
 
 			throw new CredentialRequestGeneratorException();
 		} catch (JsonProcessingException e) {
-			auditHelper.auditError(AuditModules.ID_REPO_CREDENTIAL_REQUEST_GENERATOR,
-					AuditEvents.UPDATE_CREDENTIAL_REQUEST, requestId, IdType.ID, e);
+			LOGGER.error(IdRepoSecurityManager.getUser(), CREDENTIAL_SERVICE, UPDATE_STATUS_CREDENTIAL,
+					e.getMessage());
 			LOGGER.error(IdRepoSecurityManager.getUser(), CREDENTIAL_SERVICE, UPDATE_STATUS_CREDENTIAL,
 					ExceptionUtils.getStackTrace(e));
+			auditError(AuditModules.ID_REPO_CREDENTIAL_REQUEST_GENERATOR,
+					AuditEvents.UPDATE_CREDENTIAL_REQUEST, requestId, IdType.ID, e);
 		}
 
 	}
@@ -605,4 +608,14 @@ public class CredentialRequestServiceImpl implements CredentialRequestService {
 					"Exception : " + ExceptionUtils.getStackTrace(e));
 		}
 	}
+
+	public void auditError(AuditModules module, AuditEvents event, String id, IdType idType, Throwable e) {
+		try {
+			this.audit(module, event, id, idType, mapper.writeValueAsString(IdRepoExceptionHandler.getAllErrors(e)));
+		} catch (JsonProcessingException ex) {
+			LOGGER.error(IdRepoSecurityManager.getUser(), "AuditRequestBuilder", "auditError",
+					"Exception : " + ExceptionUtils.getStackTrace(ex));
+		}
+	}
+
 }
