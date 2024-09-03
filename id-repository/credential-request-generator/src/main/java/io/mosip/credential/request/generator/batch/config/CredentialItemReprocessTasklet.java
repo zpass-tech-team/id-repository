@@ -97,17 +97,9 @@ public class CredentialItemReprocessTasklet implements Tasklet {
 						LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_REPROCESS_TASKLET, "batchid = " + batchId,
 								"started processing item : " + credential.getRequestId());
 						CredentialIssueRequestDto credentialIssueRequestDto = credentialIssueRequestHelper.getCredentialIssueRequestDto(credential);
-						CredentialServiceRequestDto credentialServiceRequestDto = new CredentialServiceRequestDto();
-						credentialServiceRequestDto.setCredentialType(credentialIssueRequestDto.getCredentialType());
-						credentialServiceRequestDto.setId(credentialIssueRequestDto.getId());
-						credentialServiceRequestDto.setIssuer(credentialIssueRequestDto.getIssuer());
-						credentialServiceRequestDto.setRecepiant(credentialIssueRequestDto.getIssuer());
-						credentialServiceRequestDto.setSharableAttributes(credentialIssueRequestDto.getSharableAttributes());
-						credentialServiceRequestDto.setUser(credentialIssueRequestDto.getUser());
-						credentialServiceRequestDto.setRequestId(credential.getRequestId());
-						credentialServiceRequestDto.setEncrypt(credentialIssueRequestDto.isEncrypt());
-						credentialServiceRequestDto.setEncryptionKey(credentialIssueRequestDto.getEncryptionKey());
-						credentialServiceRequestDto.setAdditionalData(credentialIssueRequestDto.getAdditionalData());
+						CredentialServiceRequestDto credentialServiceRequestDto = credentialIssueRequestHelper.getCredentialServiceRequestDto(credentialIssueRequestDto,
+								credential.getRequestId());
+						credential.setRequest(mapper.writeValueAsString(credentialIssueRequestDto));
 						LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_ITEM_REPROCESS_TASKLET, "batchid = " + batchId,
 								"Calling CRDENTIALSERVICE : " + credential.getRequestId());
 						String responseString = restUtil.postApi(ApiName.CRDENTIALSERVICE, null, "", "", MediaType.APPLICATION_JSON,

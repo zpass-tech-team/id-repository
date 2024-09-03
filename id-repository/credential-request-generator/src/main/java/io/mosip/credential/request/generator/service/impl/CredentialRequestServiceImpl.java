@@ -242,8 +242,10 @@ public class CredentialRequestServiceImpl implements CredentialRequestService {
 					credentialEntity.setUpdateDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 					credentialEntity.setUpdatedBy(IdRepoSecurityManager.getUser());
 					credentialEntity.setStatusComment("Cancel the request");
-					 credentialDao.update(credentialEntity);
 					CredentialIssueRequestDto credentialIssueRequestDto = credentialIssueRequestHelper.getCredentialIssueRequestDto(credentialEntity);
+					String credentialRequest = credentialIssueRequestHelper.getCredentialServiceRequest(credentialIssueRequestDto, credentialEntity.getRequestId());
+					credentialEntity.setRequest(credentialRequest);
+					credentialDao.update(credentialEntity);
 					credentialIssueResponse = new CredentialIssueResponse();
 					credentialIssueResponse.setId(credentialIssueRequestDto.getId());
 					credentialIssueResponse.setRequestId(requestId);
@@ -388,18 +390,8 @@ public class CredentialRequestServiceImpl implements CredentialRequestService {
 				credentialEntity.setUpdatedBy(PRINT_USER);
 				credentialEntity.setStatusComment("updated the status from partner");
 				CredentialIssueRequestDto credentialIssueRequestDto = credentialIssueRequestHelper.getCredentialIssueRequestDto(credentialEntity);
-				CredentialServiceRequestDto credentialServiceRequestDto = new CredentialServiceRequestDto();
-				credentialServiceRequestDto.setId(credentialIssueRequestDto.getId());
-				credentialServiceRequestDto.setCredentialType(credentialIssueRequestDto.getCredentialType());
-				credentialServiceRequestDto.setRequestId(credentialEntity.getRequestId());
-				credentialServiceRequestDto.setIssuer(credentialIssueRequestDto.getIssuer());
-				credentialServiceRequestDto.setRecepiant(credentialIssueRequestDto.getIssuer());
-				credentialServiceRequestDto.setUser(credentialIssueRequestDto.getUser());
-				credentialServiceRequestDto.setEncrypt(credentialIssueRequestDto.isEncrypt());
-				credentialServiceRequestDto.setEncryptionKey(credentialIssueRequestDto.getEncryptionKey());
-				credentialServiceRequestDto.setSharableAttributes(credentialIssueRequestDto.getSharableAttributes());
-				credentialServiceRequestDto.setAdditionalData(credentialIssueRequestDto.getAdditionalData());
-				credentialEntity.setRequest(mapper.writeValueAsString(credentialIssueRequestDto));
+				String credentialRequest = credentialIssueRequestHelper.getCredentialServiceRequest(credentialIssueRequestDto, credentialEntity.getRequestId());
+				credentialEntity.setRequest(credentialRequest);
 				credentialDao.update(credentialEntity);
 				LOGGER.info(IdRepoSecurityManager.getUser(), CREDENTIAL_SERVICE, CANCEL_CREDENTIAL,
 						"updated the status of  " + requestId);
@@ -540,6 +532,8 @@ public class CredentialRequestServiceImpl implements CredentialRequestService {
 				credentialEntity.setUpdatedBy(IdRepoSecurityManager.getUser());
 				credentialEntity.setStatusComment("retrigger the request");
 				CredentialIssueRequestDto credentialIssueRequestDto = credentialIssueRequestHelper.getCredentialIssueRequestDto(credentialEntity);
+				String credentialRequest = credentialIssueRequestHelper.getCredentialServiceRequest(credentialIssueRequestDto, credentialEntity.getRequestId());
+				credentialEntity.setRequest(credentialRequest);
 				credentialDao.save(credentialEntity);
 				credentialIssueResponse = new CredentialIssueResponse();
 				credentialIssueResponse.setId(credentialIssueRequestDto.getId());

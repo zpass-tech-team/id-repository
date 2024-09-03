@@ -10,6 +10,7 @@ import io.mosip.credential.request.generator.exception.CredentialRequestGenerato
 import io.mosip.credential.request.generator.interceptor.CredentialTransactionInterceptor;
 import io.mosip.credential.request.generator.util.RestUtil;
 import io.mosip.idrepository.core.dto.CredentialIssueRequestDto;
+import io.mosip.idrepository.core.dto.CredentialServiceRequestDto;
 import io.mosip.idrepository.core.logger.IdRepoLogger;
 import io.mosip.idrepository.core.util.EnvUtil;
 import io.mosip.kernel.core.exception.ExceptionUtils;
@@ -32,6 +33,36 @@ public class CredentialIssueRequestHelper {
 
     @Autowired
     private ObjectMapper mapper;
+
+    public CredentialServiceRequestDto getCredentialServiceRequestDto(CredentialIssueRequestDto credentialIssueRequestDto, String requestId) throws JsonProcessingException {
+        CredentialServiceRequestDto credentialServiceRequestDto = new CredentialServiceRequestDto();
+        credentialServiceRequestDto.setId(credentialIssueRequestDto.getId());
+        credentialServiceRequestDto.setCredentialType(credentialIssueRequestDto.getCredentialType());
+        credentialServiceRequestDto.setRequestId(requestId);
+        credentialServiceRequestDto.setIssuer(credentialIssueRequestDto.getIssuer());
+        credentialServiceRequestDto.setRecepiant(credentialIssueRequestDto.getIssuer());
+        credentialServiceRequestDto.setUser(credentialIssueRequestDto.getUser());
+        credentialServiceRequestDto.setEncrypt(credentialIssueRequestDto.isEncrypt());
+        credentialServiceRequestDto.setEncryptionKey(credentialIssueRequestDto.getEncryptionKey());
+        credentialServiceRequestDto.setSharableAttributes(credentialIssueRequestDto.getSharableAttributes());
+        credentialServiceRequestDto.setAdditionalData(credentialIssueRequestDto.getAdditionalData());
+        return credentialServiceRequestDto;
+    }
+
+    public String getCredentialServiceRequest(CredentialIssueRequestDto credentialIssueRequestDto, String requestId) throws JsonProcessingException {
+        CredentialServiceRequestDto credentialServiceRequestDto = new CredentialServiceRequestDto();
+        credentialServiceRequestDto.setId(credentialIssueRequestDto.getId());
+        credentialServiceRequestDto.setCredentialType(credentialIssueRequestDto.getCredentialType());
+        credentialServiceRequestDto.setRequestId(requestId);
+        credentialServiceRequestDto.setIssuer(credentialIssueRequestDto.getIssuer());
+        credentialServiceRequestDto.setRecepiant(credentialIssueRequestDto.getIssuer());
+        credentialServiceRequestDto.setUser(credentialIssueRequestDto.getUser());
+        credentialServiceRequestDto.setEncrypt(credentialIssueRequestDto.isEncrypt());
+        credentialServiceRequestDto.setEncryptionKey(credentialIssueRequestDto.getEncryptionKey());
+        credentialServiceRequestDto.setSharableAttributes(credentialIssueRequestDto.getSharableAttributes());
+        credentialServiceRequestDto.setAdditionalData(credentialIssueRequestDto.getAdditionalData());
+        return mapper.writeValueAsString(credentialIssueRequestDto);
+    }
 
     public CredentialIssueRequestDto getCredentialIssueRequestDto(CredentialEntity credentialEntity) throws JsonProcessingException {
         String request = credentialEntity.getRequest();
