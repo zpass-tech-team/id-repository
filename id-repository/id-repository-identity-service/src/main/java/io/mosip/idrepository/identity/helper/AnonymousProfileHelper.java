@@ -86,6 +86,7 @@ public class AnonymousProfileHelper {
 	public void buildAndsaveProfile(boolean isDraft) {
 		if (!isDraft)
 			try {
+				long startTime = System.currentTimeMillis();
 				List<DocumentsDTO> oldDocList = List.of(new DocumentsDTO());
 				List<DocumentsDTO> newDocList = List.of(new DocumentsDTO());
 				if (Objects.isNull(oldCbeff) && Objects.nonNull(oldCbeffRefId))
@@ -110,6 +111,8 @@ public class AnonymousProfileHelper {
 						.crDTimes(DateUtils.getUTCCurrentDateTime()).build();
 				anonymousProfileRepo.save(anonymousProfile);
 				updateChannelInfo();
+				mosipLogger.debug(IdRepoSecurityManager.getUser(), "AnonymousProfileHelper", "buildAndsaveProfile",
+						"Total time taken to complete anonymousProfileRepo save of " + regId + " (" + (System.currentTimeMillis() - startTime) + "ms)");
 			} catch (Exception e) {
 				mosipLogger.warn(IdRepoSecurityManager.getUser(), "AnonymousProfileHelper", "buildAndsaveProfile",
 						ExceptionUtils.getStackTrace(e));
