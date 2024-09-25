@@ -231,6 +231,7 @@ public class IdRepoServiceImpl implements IdRepoService<IdRequestDTO, Uin> {
 	 */
 	@Override
 	public Uin addIdentity(IdRequestDTO request, String uin) throws IdRepoAppException {
+		long startTime = System.currentTimeMillis();
 		String uinRefId = UUIDUtils.getUUID(UUIDUtils.NAMESPACE_OID, uin + SPLITTER + DateUtils.getUTCCurrentDateTime())
 				.toString();
 		ObjectNode identityObject = mapper.convertValue(request.getRequest().getIdentity(), ObjectNode.class);
@@ -240,7 +241,10 @@ public class IdRepoServiceImpl implements IdRepoService<IdRequestDTO, Uin> {
 		String uinHashWithSalt = uinHash.split(SPLITTER)[1];
 		String uinToEncrypt = getUinToEncrypt(uin);
 
+		long checkAndGetHandlesStartTime = System.currentTimeMillis();
 		Map<String, HandleDto> selectedUniqueHandlesMap = checkAndGetHandles(request);
+		mosipLogger.debug(IdRepoSecurityManager.getUser(), ID_REPO_SERVICE_IMPL, ADD_IDENTITY,
+				"Total time taken to complete checkAndGetHandles (" + (System.currentTimeMillis() - checkAndGetHandlesStartTime) + "ms)");
 
 		anonymousProfileHelper
 			.setRegId(request.getRequest().getRegistrationId())
@@ -250,6 +254,7 @@ public class IdRepoServiceImpl implements IdRepoService<IdRequestDTO, Uin> {
 		List<UinBiometric> bioList = new ArrayList<>();
 		Uin uinEntity;
 		if (Objects.nonNull(request.getRequest().getDocuments()) && !request.getRequest().getDocuments().isEmpty()) {
+			long uinSaveStartTime = System.currentTimeMillis();
 			addDocuments(uinHashWithSalt, identityInfo, request.getRequest().getDocuments(), uinRefId, docList, bioList,
 					false);
 			uinEntity = new Uin(uinRefId, uinToEncrypt, uinHash, identityInfo, securityManager.hash(identityInfo),
@@ -257,23 +262,39 @@ public class IdRepoServiceImpl implements IdRepoService<IdRequestDTO, Uin> {
 					DateUtils.getUTCCurrentDateTime(), null, null, false, null, bioList, docList);
 			uinEntity = uinRepo.save(uinEntity);
 			mosipLogger.debug(IdRepoSecurityManager.getUser(), ID_REPO_SERVICE_IMPL, ADD_IDENTITY,
+					"Total time taken to Save into UinRepo with document (" + (System.currentTimeMillis() - uinSaveStartTime) + "ms)");
+			mosipLogger.debug(IdRepoSecurityManager.getUser(), ID_REPO_SERVICE_IMPL, ADD_IDENTITY,
 					"Record successfully saved in db with documents");
 		} else {
+			long uinSaveStartTime = System.currentTimeMillis();
 			uinEntity = new Uin(uinRefId, uinToEncrypt, uinHash, identityInfo, securityManager.hash(identityInfo),
 					request.getRequest().getRegistrationId(), activeStatus, IdRepoSecurityManager.getUser(),
 					DateUtils.getUTCCurrentDateTime(), null, null, false, null, null, null);
 			uinEntity = uinRepo.save(uinEntity);
 			mosipLogger.debug(IdRepoSecurityManager.getUser(), ID_REPO_SERVICE_IMPL, ADD_IDENTITY,
+					"Total time taken to Save into UinRepo without document (" + (System.currentTimeMillis() - uinSaveStartTime) + "ms)");
+			mosipLogger.debug(IdRepoSecurityManager.getUser(), ID_REPO_SERVICE_IMPL, ADD_IDENTITY,
 					"Record successfully saved in db without documents");
 		}
 
+		long uinHistorySaveStartTime = System.currentTimeMillis();
 		uinHistoryRepo.save(new UinHistory(uinRefId, DateUtils.getUTCCurrentDateTime(), uinEntity.getUin(), uinEntity.getUinHash(),
 						uinEntity.getUinData(), uinEntity.getUinDataHash(), uinEntity.getRegId(), activeStatus,
 						IdRepoSecurityManager.getUser(), DateUtils.getUTCCurrentDateTime(), null, null, false, null));
+		mosipLogger.debug(IdRepoSecurityManager.getUser(), ID_REPO_SERVICE_IMPL, ADD_IDENTITY,
+				"Total time taken to Save into UinHistoryRepo  (" + (System.currentTimeMillis() - uinHistorySaveStartTime) + "ms)");
 
+		long addIdentityHandleStartTime = System.currentTimeMillis();
 		addIdentityHandle(uinEntity, selectedUniqueHandlesMap);
+		mosipLogger.debug(IdRepoSecurityManager.getUser(), ID_REPO_SERVICE_IMPL, ADD_IDENTITY,
+				"Total time taken to complete addIdentityHandle  (" + (System.currentTimeMillis() - addIdentityHandleStartTime) + "ms)");
+		long issueCredStartTime = System.currentTimeMillis();
 		issueCredential(uinEntity.getUin(), uinHashWithSalt, activeStatus, null, uinEntity.getRegId());
+		mosipLogger.debug(IdRepoSecurityManager.getUser(), ID_REPO_SERVICE_IMPL, ADD_IDENTITY,
+				"Total time taken to complete issueCredential  (" + (System.currentTimeMillis() - issueCredStartTime) + "ms)");
 		anonymousProfileHelper.buildAndsaveProfile(false);
+		mosipLogger.debug(IdRepoSecurityManager.getUser(), ID_REPO_SERVICE_IMPL, ADD_IDENTITY,
+				"Total time taken to complete addIdentity (" + (System.currentTimeMillis() - startTime) + "ms)");
 		return uinEntity;
 	}
 
