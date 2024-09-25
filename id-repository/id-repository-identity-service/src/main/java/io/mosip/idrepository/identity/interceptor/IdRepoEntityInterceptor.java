@@ -79,10 +79,16 @@ public class IdRepoEntityInterceptor extends EmptyInterceptor {
 		try {
 			List<String> propertyNamesList = Arrays.asList(propertyNames);
 			if (entity instanceof HandleInfo) {
+				long startTime = System.currentTimeMillis();
 				encryptDataOnSave(id, state, propertyNamesList, types, (HandleInfo) entity);
+				mosipLogger.debug(IdRepoSecurityManager.getUser(), "ID_REPO_ENTITY_INTERCEPTOR", "HandleSave",
+						"Total time taken to encrypt HandleInfo (" + (System.currentTimeMillis() - startTime) + "ms)");
 			}
 			else if (entity instanceof UinInfo) {
+				long startTime = System.currentTimeMillis();
 				encryptDataOnSave(id, state, propertyNamesList, types, (UinInfo) entity);
+				mosipLogger.debug(IdRepoSecurityManager.getUser(), "ID_REPO_ENTITY_INTERCEPTOR", "HandleSave",
+						"Total time taken to encrypt UINinfo (" + (System.currentTimeMillis() - startTime) + "ms)");
 			}
 		} catch (IdRepoAppException e) {
 			mosipLogger.error(IdRepoSecurityManager.getUser(), ID_REPO_ENTITY_INTERCEPTOR, "onSave", "\n" + e.getMessage());
