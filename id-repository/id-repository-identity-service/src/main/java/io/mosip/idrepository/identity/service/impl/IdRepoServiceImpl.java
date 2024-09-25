@@ -254,9 +254,12 @@ public class IdRepoServiceImpl implements IdRepoService<IdRequestDTO, Uin> {
 		List<UinBiometric> bioList = new ArrayList<>();
 		Uin uinEntity;
 		if (Objects.nonNull(request.getRequest().getDocuments()) && !request.getRequest().getDocuments().isEmpty()) {
-			long uinSaveStartTime = System.currentTimeMillis();
+			long docSaveStartTime = System.currentTimeMillis();
 			addDocuments(uinHashWithSalt, identityInfo, request.getRequest().getDocuments(), uinRefId, docList, bioList,
 					false);
+			mosipLogger.debug(IdRepoSecurityManager.getUser(), ID_REPO_SERVICE_IMPL, ADD_IDENTITY,
+					"Total time taken to Save Document and Biometrics (" + (System.currentTimeMillis() - docSaveStartTime) + "ms)");
+			long uinSaveStartTime = System.currentTimeMillis();
 			uinEntity = new Uin(uinRefId, uinToEncrypt, uinHash, identityInfo, securityManager.hash(identityInfo),
 					request.getRequest().getRegistrationId(), activeStatus, IdRepoSecurityManager.getUser(),
 					DateUtils.getUTCCurrentDateTime(), null, null, false, null, bioList, docList);
